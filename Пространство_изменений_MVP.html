@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пространство внедрения изменений</title>
+<style>
+  :root{
+    --red:#7000ff; --red-h:#5a00cc; --red-soft:#f2ebff;
+    --ink:#14181f; --slate:#3c4757; --muted:#5d6779;
+    --bg:#f4f5f7; --card:#ffffff; --line:#e6e9ef;
+    --navy:#2e0059; --navy2:#3a0a70;
+    --green:#0e9f5c; --green-soft:#e6f7ef;
+    --amber:#d98e04; --amber-soft:#fdf4e0;
+    --blue:#2f6fed; --blue-soft:#eaf1fe;
+    --violet:#7000ff; --violet-soft:#f2ebff;
+    --gray-soft:#eceff3;
+    --r:16px; --r-sm:10px;
+    --sh:0 1px 2px rgba(20,24,31,.05), 0 4px 16px rgba(20,24,31,.06);
+    --sh-h:0 4px 8px rgba(20,24,31,.08), 0 10px 28px rgba(20,24,31,.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:"Inter","Segoe UI",system-ui,Arial,sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; font-size:16px; -webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--red-soft);}
+
+  /* ===== Шапка ===== */
+  header{background:linear-gradient(120deg,var(--navy) 0%,var(--navy2) 60%,#4a1585 100%); color:#fff; padding:40px 24px 88px;}
+  .hwrap{max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
+  .logo{width:56px; height:56px; border-radius:14px; background:var(--red); display:grid; place-items:center; font-size:1.6rem; flex:none; box-shadow:0 4px 16px rgba(112,0,255,.4);}
+  header h1{font-size:1.75rem; font-weight:700; letter-spacing:-.02em;}
+  header p{opacity:.75; margin-top:4px; font-size:.92rem;}
+  .hdr-meta{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;}
+  .hdr-meta span{background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); padding:4px 12px; border-radius:999px; font-size:.78rem;}
+
+  /* ===== Навигация ===== */
+  nav{max-width:1100px; margin:-56px auto 0; padding:0 24px; position:sticky; top:10px; z-index:50;}
+  .navbox{background:rgba(255,255,255,.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-radius:var(--r); box-shadow:var(--sh-h); padding:10px; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; border:1px solid rgba(255,255,255,.6);}
+  .navbox a{color:var(--slate); text-decoration:none; font-size:.85rem; font-weight:500; padding:8px 14px; border-radius:var(--r-sm); transition:.15s; white-space:nowrap;}
+  .navbox a:hover{background:var(--red-soft); color:var(--red);}
+  .navbox a.active{background:var(--red); color:#fff; font-weight:600;}
+  details, .quick{scroll-margin-top:76px;}
+
+  .wrap{max-width:1100px; margin:0 auto; padding:20px 24px 40px;}
+
+  /* ===== Быстрый старт ===== */
+  .quick{background:var(--card); border-radius:var(--r); box-shadow:var(--sh); padding:26px 28px; margin-top:22px; border-top:4px solid var(--red);}
+  .quick h2{font-size:1.25rem; font-weight:700; letter-spacing:-.01em; margin-bottom:4px;}
+  .quick .sub{color:var(--muted); font-size:.88rem; margin-bottom:18px;}
+  .steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px;}
+  .step{background:var(--bg); border-radius:var(--r-sm); padding:16px 18px; transition:.15s;}
+  .step:hover{background:var(--red-soft);}
+  .step .n{display:inline-grid; place-items:center; width:30px; height:30px; border-radius:50%; background:var(--red); color:#fff; font-weight:700; font-size:.9rem; margin-bottom:10px;}
+  .step b{display:block; margin-bottom:4px; font-size:.98rem;}
+  .step p{font-size:.87rem; color:var(--slate);}
+  .hint{font-size:.85rem; color:var(--muted); margin-top:16px; padding-top:14px; border-top:1px dashed var(--line);}
+
+  /* ===== Секции ===== */
+  details{background:var(--card); border:1px solid var(--line); border-radius:var(--r); margin:16px 0; box-shadow:var(--sh); overflow:hidden; transition:box-shadow .2s;}
+  details[open]{box-shadow:var(--sh-h);}
+  summary{cursor:pointer; padding:20px 24px; font-weight:600; font-size:1.05rem; display:flex; align-items:center; gap:14px; list-style:none; user-select:none; transition:.15s;}
+  summary .ico{width:40px; height:40px; border-radius:12px; display:grid; place-items:center; font-size:1.15rem; flex:none;}
+  summary .arr{margin-left:auto; color:var(--muted); transition:transform .25s; font-size:.9rem;}
+  details[open] summary .arr{transform:rotate(180deg);}
+  summary:hover{color:var(--red);}
+  .body{padding:6px 26px 26px;}
+
+  /* иконки секций */
+  .i-red{background:var(--red-soft);} .i-blue{background:var(--blue-soft);}
+  .i-amber{background:var(--amber-soft);} .i-green{background:var(--green-soft);}
+  .i-violet{background:var(--violet-soft);} .i-gray{background:var(--gray-soft);}
+
+  /* ===== Таблицы ===== */
+  .tbl-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-sm);}
+  table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:560px;}
+  th{background:var(--bg); text-align:left; padding:12px 14px; font-weight:600; color:var(--slate); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--line);}
+  td{padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  tbody tr{transition:background .12s;}
+  tbody tr:nth-child(even) td{background:#fafbfd;}
+  tbody tr:hover td{background:var(--red-soft);}
+
+  ul.check{list-style:none;} ul.check li{padding:7px 0 7px 34px; position:relative; border-bottom:1px dashed var(--line);}
+  ul.check li:last-child{border-bottom:none;}
+  ul.check li::before{content:""; position:absolute; left:0; top:9px; width:20px; height:20px; border:2px solid var(--red); border-radius:6px;}
+  ul.check li:hover::before{background:var(--red-soft);}
+
+  .callout{border-radius:var(--r-sm); padding:14px 16px 14px 18px; margin:14px 0; font-size:.92rem; position:relative;}
+  .callout::before{content:""; position:absolute; left:0; top:10px; bottom:10px; width:4px; border-radius:4px; background:var(--blue);}
+  .callout.info{background:var(--blue-soft);}
+  .callout.warn{background:var(--amber-soft);} .callout.warn::before{background:var(--amber);}
+  .callout.ok{background:var(--green-soft);} .callout.ok::before{background:var(--green);}
+
+  .badge{display:inline-block; padding:4px 12px; border-radius:999px; font-size:.78rem; font-weight:600; white-space:nowrap;}
+  .b-blue{background:var(--blue-soft); color:var(--blue);}
+  .b-green{background:var(--green-soft); color:var(--green);}
+  .b-amber{background:var(--amber-soft); color:#8a5a00;}
+  .b-red{background:var(--red-soft); color:var(--red);}
+  .b-violet{background:var(--violet-soft); color:var(--violet);}
+  .b-gray{background:var(--gray-soft); color:var(--slate);}
+
+  /* ===== Формы и кнопки ===== */
+  .toolbar{display:flex; gap:10px; flex-wrap:wrap; margin:16px 0; align-items:center;}
+  button,.btn{background:var(--red); color:#fff; border:none; padding:11px 20px; border-radius:var(--r-sm); cursor:pointer; font-size:.9rem; font-weight:600; font-family:inherit; transition:.15s; box-shadow:0 2px 8px rgba(112,0,255,.25);}
+  button:hover{background:var(--red-h); transform:translateY(-1px); box-shadow:0 4px 14px rgba(112,0,255,.35);}
+  button:active{transform:translateY(0);}
+  button.ghost{background:var(--card); color:var(--slate); border:1px solid var(--line); box-shadow:none;}
+  button.ghost:hover{border-color:var(--red); color:var(--red); background:var(--card);}
+
+  input,select,textarea{padding:10px 12px; border:1px solid var(--line); border-radius:var(--r-sm); font-family:inherit; font-size:.9rem; background:#fff; color:var(--ink); transition:.15s; min-width:0;}
+  input:focus,select:focus,textarea:focus{outline:none; border-color:var(--red); box-shadow:0 0 0 3px var(--red-soft);}
+  input[type=checkbox]{width:20px; height:20px; accent-color:var(--red); cursor:pointer;}
+
+  .form-row{display:grid; grid-template-columns:150px 1fr; gap:8px 12px; margin:10px 0; align-items:center;}
+  .form-row label{font-size:.85rem; color:var(--slate); font-weight:500;}
+  #addForm{background:var(--bg); border:1px solid var(--line); border-radius:var(--r); padding:20px 22px; margin-bottom:16px;}
+
+  .stat{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0;}
+  .stat .pill{background:var(--card); border:1px solid var(--line); border-radius:var(--r-sm); padding:10px 16px; font-size:.85rem; color:var(--slate);}
+  .stat b{font-size:1.2rem; color:var(--ink); display:block;}
+
+  footer{margin-top:32px; padding:24px; color:var(--muted); font-size:.85rem; text-align:center; border-top:1px solid var(--line);}
+
+  h3.tpl{margin:24px 0 8px; color:var(--ink); font-size:1.02rem; display:flex; align-items:center; gap:8px;}
+  h3.tpl::after{content:""; flex:1; height:1px; background:var(--line);}
+
+  @media(max-width:640px){
+    .form-row{grid-template-columns:1fr;}
+    header{padding:28px 16px 72px;}
+    .body{padding:4px 16px 20px;} summary{padding:16px;}
+  }
+  @media print{ details{box-shadow:none;} .toolbar,.stat,nav,#toTop{display:none;} details{page-break-inside:avoid;} }
+
+  /* ===== Доступность и комфорт ===== */
+  :is(a,button,input,select,textarea,summary):focus-visible{outline:3px solid var(--red); outline-offset:2px; border-radius:6px;}
+  summary{min-height:44px;}
+  button{min-height:44px;}
+  .navbox a{min-height:36px; display:inline-flex; align-items:center;}
+  input[type=checkbox]{width:22px; height:22px;}
+  @media(prefers-reduced-motion:reduce){
+    *{transition:none !important; animation:none !important;}
+    html{scroll-behavior:auto;}
+    button:hover{transform:none;}
+  }
+
+  /* ===== Кнопка «наверх» ===== */
+  #toTop{position:fixed; right:22px; bottom:22px; width:46px; height:46px; min-height:46px; padding:0; border-radius:50%; background:var(--red); color:#fff; border:none; cursor:pointer; font-size:1.1rem; box-shadow:var(--sh-h); opacity:0; pointer-events:none; transition:.25s; z-index:60;}
+  #toTop.show{opacity:1; pointer-events:auto;}
+  #toTop:hover{background:var(--red-h);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="logo">🔄</div>
+    <div>
+      <h1>Пространство внедрения изменений</h1>
+      <p>Единая методология изменений компании · для руководителей · работает офлайн</p>
+      <div class="hdr-meta"><span>6 ролей</span><span>4 этапа</span><span>7 принципов</span><span>7 критериев</span></div>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="navbox">
+    <a href="#start">⚡ Старт</a>
+    <a href="#criteria">Критерии</a>
+    <a href="#roles">Роли</a>
+    <a href="#stages">Этапы</a>
+    <a href="#checklist">Чек-лист</a>
+    <a href="#principles">Принципы</a>
+    <a href="#board">Доска инструкций</a>
+    <a href="#templates">Шаблоны</a>
+    <a href="#registry">📊 Реестр изменений</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ===== БЫСТРЫЙ СТАРТ ===== -->
+<div class="quick" id="start">
+  <h2>⚡ Первые 3 шага за 10 минут</h2>
+  <p class="sub">Откройте страницу — и уже через 10 минут вы знаете, что делать дальше.</p>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><b>Проверьте применимость</b><p>Раздел «Критерии применения» — ответьте на 7 вопросов чек-листа «подходит ли мне».</p></div>
+    <div class="step"><span class="n">2</span><b>Назначьте роли</b><p>Раздел «Роли» — заполните таблицу: спонсор, команда изменений, чемпионы.</p></div>
+    <div class="step"><span class="n">3</span><b>Выберите подход</b><p>«Этапы» → Этап 1: сразу на всех / пилот / последовательно. Затем пройдите чек-лист из 13 пунктов.</p></div>
+  </div>
+  <p class="hint">💡 Изменение затрагивает менее 20 человек, привычки не меняются и сопротивление низкое? Фреймворк, вероятно, не нужен — управляйте в обычном порядке.</p>
+</div>
+
+<!-- ===== КРИТЕРИИ ПРИМЕНЕНИЯ ===== -->
+<details id="criteria">
+  <summary><span class="ico i-red">🎯</span> Критерии применения — нужен ли фреймворк? <span class="arr">▾</span></summary>
+  <div class="body">
+    <p style="margin-bottom:12px;">Фреймворк нужен, если выполняется <b>2 и более критериев</b>:</p>
+    <div class="tbl-wrap"><table>
+      <tr><th>Критерий</th><th>Вопрос для самопроверки</th><th>Да</th></tr>
+      <tr><td><b>Масштаб</b></td><td>Более 20–30 сотрудников, несколько отделов/функций?</td><td><input type="checkbox"></td></tr>
+      <tr><td><b>Сопротивление</b></td><td>Высокое (саботаж, увольнения, негатив) или умеренное (пассивность, жалобы)?</td><td><input type="checkbox"></td></tr>
+      <tr><td><b>Глубина</b></td><td>Кардинальная смена привычек, процессов, культуры; сложные непривычные навыки?</td><td><input type="checkbox"></td></tr>
+      <tr><td><b>Риски бездействия</b></td><td>Серьёзные финансовые/репутационные потери? Текущие процессы вредят результатам?</td><td><input type="checkbox"></td></tr>
+      <tr><td><b>Устойчивость</b></td><td>Важно, чтобы новое закрепилось и не вернулись к старому? Стратегический фундамент?</td><td><input type="checkbox"></td></tr>
+      <tr><td><b>Длительность</b></td><td>От нескольких месяцев до года и более? Несколько сложных этапов?</td><td><input type="checkbox"></td></tr>
+      <tr><td><b>Понятность старта</b></td><td>Нет понимания, с какого шага начинать и как вовлекать команду?</td><td><input type="checkbox"></td></tr>
+    </table></div>
+    <div class="callout ok">✅ <b>2+ «да»</b> → работайте по фреймворку. Начните с чек-листа перед внедрением.</div>
+    <div class="callout warn">⚠️ <b>0–1 «да»</b> → обычного управления задачами достаточно. Вернитесь, если ситуация изменится.</div>
+  </div>
+</details>
+
+<!-- ===== РОЛИ ===== -->
+<details id="roles">
+  <summary><span class="ico i-blue">👥</span> Роли в изменениях — назначьте перед стартом <span class="arr">▾</span></summary>
+  <div class="body">
+    <div class="tbl-wrap"><table>
+      <tr><th>Роль</th><th>Кто это</th><th>Ответственность</th><th>Кто в вашем изменении</th></tr>
+      <tr><td><b>Спонсор изменений</b></td><td>Заинтересованный руководитель с ресурсами и авторитетом</td><td>Ресурсы, снятие барьеров, видение</td><td><input style="width:95%"></td></tr>
+      <tr><td><b>Руководитель</b></td><td>Управляет подразделением, где проходят изменения</td><td>Изменение на своей территории, вовлечение людей</td><td><input style="width:95%"></td></tr>
+      <tr><td><b>Чемпионы изменений</b></td><td>Лидеры в командах, помогающие проводить изменения</td><td>Донесение до команд, обратная связь «с полей»</td><td><input style="width:95%"></td></tr>
+      <tr><td><b>Команда изменений + Руководитель проекта</b></td><td>Группа, реализующая изменение</td><td>Определяют, что и как должно измениться; поддержка ресурсами и методологией</td><td><input style="width:95%"></td></tr>
+      <tr><td><b>Инициатор</b></td><td>Сотрудник/подразделение, инициировавший изменение</td><td>Обоснование изменения, контекст</td><td><input style="width:95%"></td></tr>
+      <tr><td><b>Центр экспертизы</b></td><td>Экспертная группа</td><td>Оценка готовности, помощь в подготовке, консультации, контроль</td><td><input style="width:95%"></td></tr>
+    </table></div>
+    <div class="callout info">💡 <b>Правило:</b> у каждого изменения — спонсор высокого уровня. Без спонсора изменение буксует на первом барьере.</div>
+    <div class="callout warn">⚠️ <b>Частая ошибка:</b> назначить «чемпионами» всех подряд. Чемпионы — это те, к кому команда реально прислушивается, а не самые удобные сотрудники.</div>
+  </div>
+</details>
+
+<!-- ===== ЭТАПЫ ===== -->
+<details id="stages">
+  <summary><span class="ico i-amber">🚀</span> Этапы внедрения — 4 этапа <span class="arr">▾</span></summary>
+  <div class="body">
+    <div class="tbl-wrap"><table>
+      <tr><th>Этап</th><th>Шаги</th><th>Статус вашего изменения</th></tr>
+      <tr><td><b>1. Разработка плана внедрения</b></td><td>1) Сбор информации (проверяем наличие всей необходимой информации, уточняем с командой)<br>2) Выбор подхода: сразу на всех / пилот + масштабирование / последовательно по группам<br>3) Подготовка плана: шаги, сроки, ответственные</td><td><select><option>—</option><option>🟢 Выполнен</option><option>🟡 В работе</option><option>⚪ Не начат</option></select></td></tr>
+      <tr><td><b>2. Старт изменений</b></td><td>Шаг 1. Вовлечение руководителей: вовлекаем, обнаруживаем сопротивление рано, собираем обратную связь<br>Шаг 2. Подготовка чемпионов: формируем группу, мотивируем, формируем ожидания<br>Шаг 3. Вовлечение сотрудников: информируем о проекте, ожиданиях, обучении, мониторинге и поддержке</td><td><select><option>—</option><option>🟢 Выполнен</option><option>🟡 В работе</option><option>⚪ Не начат</option></select></td></tr>
+      <tr><td><b>3. Основная часть внедрения</b></td><td>1) Сбор информации<br>2) Мониторинг и обратная связь: собираем, обрабатываем, отрабатываем сопротивление<br>3) Коммуникации: промежуточные о ходе изменений<br>4) Мониторинг эффектов: динамика и возможные негативные эффекты</td><td><select><option>—</option><option>🟢 Выполнен</option><option>🟡 В работе</option><option>⚪ Не начат</option></select></td></tr>
+      <tr><td><b>4. Завершение внедрения</b></td><td>Закрепление изменений, оценка результатов, передача в операционную деятельность</td><td><select><option>—</option><option>🟢 Выполнен</option><option>🟡 В работе</option><option>⚪ Не начат</option></select></td></tr>
+    </table></div>
+    <div class="callout info">💡 <b>Последовательность Этапа 2 (важно!):</b> сначала руководители → потом чемпионы → потом сотрудники. Перепрыгивание напрямую к сотрудникам — главная причина сопротивления.</div>
+  </div>
+</details>
+
+<!-- ===== ЧЕК-ЛИСТ 13 ПУНКТОВ ===== -->
+<details id="checklist">
+  <summary><span class="ico i-green">✅</span> Чек-лист перед переходом к внедрению — 13 пунктов <span class="arr">▾</span></summary>
+  <div class="body">
+    <ul class="check">
+      <li>В чём суть изменения? (что изменится)</li>
+      <li>Почему это изменение необходимо именно сейчас?</li>
+      <li>Каких сотрудников коснутся изменения? (подразделения, роли)</li>
+      <li>Какие действия ожидаются от всех ролей — кто и что должен делать по-другому?</li>
+      <li>В какие сроки ожидается внедрение — дедлайны, контрольные точки?</li>
+      <li>Какое сопротивление можно встретить и каковы варианты отработки?</li>
+      <li>Кто является командой изменений: руководитель проекта; команда проекта?</li>
+      <li>Есть ли спонсор проекта?</li>
+      <li>Какие ресурсы есть: финансовые, временные, человеческие?</li>
+      <li>Есть ли люди, которые будут сопровождать изменения: обучать, консультировать?</li>
+      <li>Как будем оценивать успешность внедрения в процессе и по итогу?</li>
+      <li>Готовы ли методические материалы, инструкции, обучающие материалы?</li>
+      <li>Разработана ли система мотивации участников изменений?</li>
+    </ul>
+    <div class="callout warn">⚠️ Если по 3+ пунктам ответ «не знаю / нет» — вернитесь на Этап 1 и доработайте план. Сопротивление дешевле предотвращать, чем отрабатывать.</div>
+  </div>
+</details>
+
+<!-- ===== ПРИНЦИПЫ ===== -->
+<details id="principles">
+  <summary><span class="ico i-violet">🧭</span> Принципы — 7 правил, которые держат изменение <span class="arr">▾</span></summary>
+  <div class="body">
+    <div class="tbl-wrap"><table>
+      <tr><th>#</th><th>Принцип</th><th>Что это значит на практике</th></tr>
+      <tr><td>1</td><td>Последовательное вовлечение сотрудников</td><td>Не «сразу всех», а в порядке: руководители → чемпионы → сотрудники</td></tr>
+      <tr><td>2</td><td>Сбор и отработка обратной связи</td><td>Каждый сигнал получает ответ; молчание воспринимается как игнор</td></tr>
+      <tr><td>3</td><td>Постепенность внедрения в сложных проектах</td><td>Пилот → анализ → масштабирование</td></tr>
+      <tr><td>4</td><td>Спонсор высокого уровня у каждого изменения</td><td>У каждого изменения — свой спонсор из топ-команды</td></tr>
+      <tr><td>5</td><td>Постоянное коммуникационное сопровождение</td><td>Регулярные промежуточные коммуникации, а не «один раз объявили»</td></tr>
+      <tr><td>6</td><td>Вовлечение линейных руководителей на ранних этапах</td><td>Линейные руководители узнают первыми — до сотрудников</td></tr>
+      <tr><td>7</td><td>Привлечение чемпионов при масштабных изменениях</td><td>Чемпионы в каждой затронутой команде</td></tr>
+    </table></div>
+  </div>
+</details>
+
+<!-- ===== ДОСКА ИНСТРУКЦИЙ ===== -->
+<details id="board">
+  <summary><span class="ico i-blue">📋</span> Доска инструкций — пошаговый сценарий руководителя <span class="arr">▾</span></summary>
+  <div class="body">
+    <div class="tbl-wrap"><table>
+      <tr><th>#</th><th>Шаг</th><th>Цель</th><th>Действия</th><th>Артефакт</th><th>Критерий готовности</th></tr>
+      <tr><td>1</td><td><b>Диагностика</b></td><td>Понять, нужен ли фреймворк</td><td>Пройти 7 критериев + чек-лист 13 пунктов</td><td>Заполненный чек-лист</td><td>2+ критерия «да», чек-лист без пробелов</td></tr>
+      <tr><td>2</td><td><b>Выбор подхода</b></td><td>Определить стратегию развёртывания</td><td>Оценить риски каждого варианта; согласовать с командой изменений и спонсором</td><td>Решение: сразу на всех / пилот / последовательно</td><td>Решение зафиксировано и спонсор согласен</td></tr>
+      <tr><td>3</td><td><b>Подготовка плана</b></td><td>Детальный план</td><td>Шаги, сроки, ответственные; контрольные точки; план коммуникаций</td><td>План внедрения</td><td>Каждый шаг имеет владельца и дату</td></tr>
+      <tr><td>4</td><td><b>Вовлечение руководителей</b></td><td>Поддержка + раннее обнаружение сопротивления</td><td>Индивидуальные встречи, сбор возражений, обратная связь</td><td>Карта стейкхолдеров</td><td>Все затронутые руководители проинформированы, возражения зафиксированы</td></tr>
+      <tr><td>5</td><td><b>Подготовка чемпионов</b></td><td>Группа влияния в командах</td><td>Отбор, мотивация, формирование ожиданий</td><td>Список чемпионов + регламент</td><td>Чемпион определён в каждой затронутой команде</td></tr>
+      <tr><td>6</td><td><b>Вовлечение сотрудников</b></td><td>Понимание и принятие</td><td>Информирование: проект, ожидания, обучение, мониторинг, поддержка</td><td>Коммуникация-анонс</td><td>Сотрудники знают: что изменится, что от них ждут, где получать помощь</td></tr>
+      <tr><td>7</td><td><b>Мониторинг и обратная связь</b></td><td>Управлять сопротивлением</td><td>Сбор ОС по каналам, обработка, отработка возражений</td><td>Журнал обратной связи</td><td>Каждое обращение получает ответ в согласованный срок</td></tr>
+      <tr><td>8</td><td><b>Коммуникации</b></td><td>Поддерживать темп и доверие</td><td>Промежуточные анонсы о ходе изменений по графику</td><td>План коммуникаций (выполненный)</td><td>Коммуникации идут по графику без пропусков</td></tr>
+      <tr><td>9</td><td><b>Мониторинг эффектов</b></td><td>Не навредить</td><td>Отслеживать динамику метрик и негативные эффекты</td><td>Отчёт по метрикам</td><td>Метрики в допустимых границах, негативные эффекты имеют план отработки</td></tr>
+      <tr><td>10</td><td><b>Завершение</b></td><td>Закрепить результат</td><td>Закрепление, оценка результатов, передача в операционную деятельность</td><td>Итоговый отчёт + передача</td><td>Новое работает в обычном режиме без команды изменений</td></tr>
+    </table></div>
+  </div>
+</details>
+
+<!-- ===== ШАБЛОНЫ ===== -->
+<details id="templates">
+  <summary><span class="ico i-gray">🧩</span> Шаблоны для работы <span class="arr">▾</span></summary>
+  <div class="body">
+
+    <h3 class="tpl">📄 Мини-план внедрения</h3>
+    <div class="tbl-wrap"><table>
+      <tr><th>Поле</th><th>Значение</th></tr>
+      <tr><td>Название изменения</td><td><input style="width:95%"></td></tr>
+      <tr><td>Суть (что изменится)</td><td><textarea style="width:95%"></textarea></td></tr>
+      <tr><td>Подход</td><td><select><option>Сразу на всех</option><option>Пилот + масштабирование</option><option>Последовательно по группам</option></select></td></tr>
+      <tr><td>Затронутые подразделения</td><td><textarea style="width:95%"></textarea></td></tr>
+      <tr><td>Спонсор</td><td><input style="width:95%"></td></tr>
+      <tr><td>Шаг 1 / срок / ответственный</td><td><input style="width:95%"></td></tr>
+      <tr><td>Шаг 2 / срок / ответственный</td><td><input style="width:95%"></td></tr>
+      <tr><td>Шаг 3 / срок / ответственный</td><td><input style="width:95%"></td></tr>
+      <tr><td>Критерий успеха</td><td><textarea style="width:95%"></textarea></td></tr>
+    </table></div>
+
+    <h3 class="tpl">🗺 Карта стейкхолдеров / сопротивления</h3>
+    <div class="tbl-wrap"><table>
+      <tr><th>Группа / лицо</th><th>Влияние (выс/сред/низк)</th><th>Позиция (за / нейтр / против)</th><th>Опасение</th><th>Действие</th></tr>
+      <tr><td><input style="width:95%"></td><td><input style="width:90%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:95%"></td></tr>
+      <tr><td><input style="width:95%"></td><td><input style="width:90%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:95%"></td></tr>
+      <tr><td><input style="width:95%"></td><td><input style="width:90%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:95%"></td></tr>
+    </table></div>
+
+    <h3 class="tpl">📣 План коммуникаций</h3>
+    <div class="tbl-wrap"><table>
+      <tr><th>Дата</th><th>Аудитория</th><th>Сообщение</th><th>Канал</th><th>Ответственный</th></tr>
+      <tr><td><input style="width:85%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:90%"></td><td><input style="width:90%"></td></tr>
+      <tr><td><input style="width:85%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:90%"></td><td><input style="width:90%"></td></tr>
+      <tr><td><input style="width:85%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:90%"></td><td><input style="width:90%"></td></tr>
+    </table></div>
+
+    <h3 class="tpl">📋 Журнал обратной связи</h3>
+    <div class="tbl-wrap"><table>
+      <tr><th>Дата</th><th>Автор (анонимно?)</th><th>Сообщение / возражение</th><th>Ответ / действие</th><th>Статус</th></tr>
+      <tr><td><input style="width:85%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:95%"></td><td><input style="width:85%"></td></tr>
+      <tr><td><input style="width:85%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:95%"></td><td><input style="width:85%"></td></tr>
+    </table></div>
+
+    <h3 class="tpl">🚧 Реестр сопротивления</h3>
+    <div class="tbl-wrap"><table>
+      <tr><th>Признак сопротивления</th><th>Группа</th><th>Причина (вероятная)</th><th>План отработки</th><th>Статус</th></tr>
+      <tr><td><input style="width:95%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:95%"></td><td><input style="width:85%"></td></tr>
+      <tr><td><input style="width:95%"></td><td><input style="width:90%"></td><td><input style="width:95%"></td><td><input style="width:95%"></td><td><input style="width:85%"></td></tr>
+    </table></div>
+  </div>
+</details>
+
+<!-- ===== РЕЕСТР ИЗМЕНЕНИЙ ===== -->
+<details open id="registry">
+  <summary><span class="ico i-red">📊</span> Реестр изменений компании <span class="arr">▾</span></summary>
+  <div class="body">
+    <div class="stat" id="stats"></div>
+    <div class="toolbar">
+      <button onclick="toggleForm()">➕ Добавить изменение</button>
+      <button class="ghost" onclick="exportCSV()">⬇ Экспорт в CSV</button>
+      <button class="ghost" onclick="exportJSON()">💾 Сохранить данные</button>
+      <button class="ghost" onclick="document.getElementById('importFile').click()">📂 Загрузить данные</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+    </div>
+
+    <div id="addForm" style="display:none;">
+      <div class="form-row"><label>Название *</label><input id="f_name" style="width:100%"></div>
+      <div class="form-row"><label>Владелец</label><input id="f_owner"></div>
+      <div class="form-row"><label>Подразделение</label><input id="f_dept"></div>
+      <div class="form-row"><label>Статус</label>
+        <select id="f_status">
+          <option value="plan">⚪ Планируется</option>
+          <option value="stage1">🔵 Этап 1: План</option>
+          <option value="stage2">🟡 Этап 2: Старт</option>
+          <option value="stage3">🟠 Этап 3: Основная часть</option>
+          <option value="stage4">🟣 Этап 4: Завершение</option>
+          <option value="done">🟢 Завершено</option>
+          <option value="paused">🔴 Приостановлено</option>
+        </select>
+      </div>
+      <div class="form-row"><label>Затронуто людей</label><input id="f_people" type="number" style="width:120px"></div>
+      <div class="form-row"><label>Дедлайн</label><input id="f_deadline" type="date"></div>
+      <div class="form-row"><label>Ссылка/комментарий</label><input id="f_note" style="width:100%"></div>
+      <div class="toolbar">
+        <button onclick="addChange()">Сохранить</button>
+        <button class="ghost" onclick="toggleForm()">Отмена</button>
+      </div>
+    </div>
+
+    <div class="tbl-wrap"><table>
+      <thead>
+        <tr><th>Изменение</th><th>Владелец</th><th>Подразделение</th><th>Статус</th><th>Люди</th><th>Дедлайн</th><th></th></tr>
+      </thead>
+      <tbody id="registryBody"></tbody>
+    </table></div>
+    <p class="hint" style="margin-top:14px;">Данные сохраняются в этом браузере (localStorage). Для переноса — «Сохранить данные» (файл JSON) и «Загрузить данные» на другом компьютере. В будущей версии — общая база для всей компании.</p>
+  </div>
+</details>
+
+<div class="callout info" style="margin-top:24px;">
+  🔁 <b>Как работает система:</b> каждое новое изменение = карточка в реестре. Руководитель изменения работает по доске инструкций, статусы обновляются здесь. Руководство компании видит весь портфель изменений в одном месте.
+</div>
+
+</div>
+
+<button id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Наверх" aria-label="Наверх">↑</button>
+
+<footer>
+  Пространство внедрения изменений · MVP · методология: роли (6) · этапы (4) · принципы (7) · критерии (7) · чек-лист (13)<br>
+  Работает офлайн · не требует установки · следующая версия: анкеты обратной связи и общий доступ
+</footer>
+
+<script>
+const ST = {
+  plan:["⚪ Планируется","b-gray"], stage1:["🔵 Этап 1: План","b-blue"],
+  stage2:["🟡 Этап 2: Старт","b-amber"], stage3:["🟠 Этап 3: Основная часть","b-amber"],
+  stage4:["🟣 Этап 4: Завершение","b-violet"], done:["🟢 Завершено","b-green"],
+  paused:["🔴 Приостановлено","b-red"]
+};
+const KEY = "cm_registry_v1";
+let changes = [];
+try { changes = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) { changes = []; }
+if (!changes.length) {
+  changes = [
+    {name:"Внедрение новой CRM (пример)", owner:"Иванов И.И.", dept:"Продажи", status:"stage3", people:350, deadline:"2026-11-30", note:"Пилот в 2 отделах прошёл, масштабируем"},
+    {name:"Переход на электронный документооборот (пример)", owner:"Петрова А.С.", dept:"Все подразделения", status:"stage2", people:4500, deadline:"2027-03-31", note:"Старт с волны 1 — офисы"}
+  ];
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(changes)); render(); }
+function badge(s){ const x = ST[s]||ST.plan; return `<span class="badge ${x[1]}">${x[0]}</span>`; }
+function render(){
+  const tb = document.getElementById("registryBody"); tb.innerHTML = "";
+  changes.forEach((c,i)=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><b>${esc(c.name)}</b>${c.note?`<br><span style="font-size:.8rem;color:var(--muted)">${esc(c.note)}</span>`:""}</td>
+      <td>${esc(c.owner||"—")}</td><td>${esc(c.dept||"—")}</td><td>${badge(c.status)}</td>
+      <td>${c.people||"—"}</td><td>${c.deadline||"—"}</td>
+      <td style="white-space:nowrap">
+        <select onchange="setStatus(${i},this.value)" style="font-size:.8rem;padding:5px 8px">
+          ${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${c.status===k?"selected":""}>${v[0]}</option>`).join("")}
+        </select>
+        <button class="ghost" style="padding:5px 9px;font-size:.8rem" onclick="del(${i})" title="Удалить" aria-label="Удалить изменение">✕</button>
+      </td>`;
+    tb.appendChild(tr);
+  });
+  const cnt = {}; Object.keys(ST).forEach(k=>cnt[k]=0);
+  changes.forEach(c=>cnt[c.status]=(cnt[c.status]||0)+1);
+  document.getElementById("stats").innerHTML =
+    `<div class="pill">Всего изменений: <b>${changes.length}</b></div>` +
+    Object.entries(ST).filter(([k])=>cnt[k]).map(([k,v])=>`<div class="pill">${v[0]}: <b>${cnt[k]}</b></div>`).join("");
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
+function toggleForm(){ const f=document.getElementById("addForm"); f.style.display = f.style.display==="none"?"block":"none"; }
+function addChange(){
+  const name = document.getElementById("f_name").value.trim();
+  if(!name){ alert("Укажите название изменения"); return; }
+  changes.unshift({
+    name, owner:document.getElementById("f_owner").value.trim(),
+    dept:document.getElementById("f_dept").value.trim(),
+    status:document.getElementById("f_status").value,
+    people:+document.getElementById("f_people").value||"",
+    deadline:document.getElementById("f_deadline").value,
+    note:document.getElementById("f_note").value.trim()
+  });
+  ["f_name","f_owner","f_dept","f_people","f_deadline","f_note"].forEach(id=>document.getElementById(id).value="");
+  toggleForm(); save();
+}
+function setStatus(i,s){ changes[i].status=s; save(); }
+function del(i){ if(confirm(`Удалить «${changes[i].name}»?`)){ changes.splice(i,1); save(); } }
+function csvCell(v){ return `"${String(v==null?"":v).replace(/"/g,'""')}"`; }
+function exportCSV(){
+  const head=["Название","Владелец","Подразделение","Статус","Люди","Дедлайн","Комментарий"];
+  const rows = changes.map(c=>[c.name,c.owner,c.dept,ST[c.status][0],c.people,c.deadline,c.note].map(csvCell).join(";"));
+  download("\uFEFF"+head.join(";")+"\n"+rows.join("\n"),"реестр_изменений.csv","text/csv");
+}
+function exportJSON(){ download(JSON.stringify(changes,null,2),"реестр_изменений.json","application/json"); }
+function importJSON(ev){
+  const f = ev.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = e => { try { const d = JSON.parse(e.target.result); if(Array.isArray(d)){ changes = d; save(); alert("Загружено: "+d.length); } else alert("Неверный формат"); } catch(e){ alert("Ошибка чтения файла"); } };
+  r.readAsText(f); ev.target.value="";
+}
+function download(text,fname,type){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text],{type:type+";charset=utf-8"}));
+  a.download = fname; a.click(); URL.revokeObjectURL(a.href);
+}
+render();
+
+/* ===== UX: подсветка активного раздела + кнопка «наверх» ===== */
+const navLinks = [...document.querySelectorAll('.navbox a')];
+const sections = navLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function spy(){
+  const y = scrollY + 120;
+  let cur = sections[0];
+  sections.forEach(s => { if (s.offsetTop <= y) cur = s; });
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id));
+  document.getElementById('toTop').classList.toggle('show', scrollY > 400);
+}
+addEventListener('scroll', spy, {passive:true}); spy();
+</script>
+</body>
+</html>
