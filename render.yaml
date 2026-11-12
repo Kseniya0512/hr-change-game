@@ -1,0 +1,23 @@
+# Free preview. The filesystem is temporary; use deploy/render-persistent.yaml
+# with a paid persistent disk for an actual workshop.
+services:
+  - type: web
+    name: hr-change-game-demo
+    runtime: node
+    plan: free
+    branch: feat/change-workshop
+    autoDeploy: false
+    buildCommand: npm ci --include=dev --no-audit --no-fund && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATA_DIR
+        value: .data
+      - key: HOST_ACCESS_KEY
+        generateValue: true

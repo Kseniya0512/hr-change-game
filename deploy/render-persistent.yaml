@@ -1,0 +1,26 @@
+# Paid persistent workshop. Review Render's displayed price before applying.
+services:
+  - type: web
+    name: hr-change-game-workshop
+    runtime: node
+    plan: starter
+    branch: feat/change-workshop
+    autoDeploy: false
+    buildCommand: npm ci --include=dev --no-audit --no-fund && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    disk:
+      name: workshop-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATA_DIR
+        value: /var/data
+      - key: HOST_ACCESS_KEY
+        generateValue: true
