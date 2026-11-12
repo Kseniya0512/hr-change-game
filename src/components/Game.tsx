@@ -80,6 +80,7 @@ export function Game({
   async function command(payload: Record<string, unknown>) {
     const next = await api<View>(`/api/teams/${team.id}/command`, {
       id: uid(),
+      roundId: r.id,
       ...payload,
     });
     update(next);
@@ -89,10 +90,12 @@ export function Game({
     setBusy(true);
     try {
       await command(payload);
+      return true;
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "Не удалось выполнить действие",
       );
+      return false;
     } finally {
       setBusy(false);
     }
@@ -113,8 +116,11 @@ export function Game({
   }
   async function next() {
     const n = Math.min(5, step + 1);
-    if (editable)
-      await run({ type: "step", step: n, expectedRevision: r.revision });
+    if (
+      editable &&
+      !(await run({ type: "step", step: n, expectedRevision: r.revision }))
+    )
+      return;
     setStep(n);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -228,6 +234,7 @@ export function Game({
             team={team}
             step={step}
             editable={editable}
+            ownsDraft={canConfirm}
             save={save}
             navigate={setStep}
             canExport={view.role !== "participant"}
@@ -299,6 +306,7 @@ export function Game({
             <>
               <Field
                 label="Ваше предложение"
+                maxLength={2000}
                 value={proposal}
                 onChange={setProposal}
                 multiline
@@ -393,6 +401,7 @@ export function Game({
             <>
               <Field
                 label="Комментарий команде"
+                maxLength={2000}
                 value={comment}
                 onChange={setComment}
                 multiline
@@ -401,8 +410,8 @@ export function Game({
                 className="button soft small"
                 disabled={!comment.trim() || busy || !editable}
                 onClick={async () => {
-                  await run({ type: "comment", text: comment });
-                  setComment("");
+                  if (await run({ type: "comment", text: comment }))
+                    setComment("");
                 }}
               >
                 Оставить комментарий
@@ -411,6 +420,7 @@ export function Game({
                 <>
                   <Field
                     label="Обоснование альтернативного решения"
+                    maxLength={2000}
                     value={alternative}
                     onChange={setAlternative}
                     multiline
@@ -419,8 +429,10 @@ export function Game({
                     className="button soft small"
                     disabled={!alternative.trim() || busy || !editable}
                     onClick={async () => {
-                      await run({ type: "alternative", reason: alternative });
-                      setAlternative("");
+                      if (
+                        await run({ type: "alternative", reason: alternative })
+                      )
+                        setAlternative("");
                     }}
                   >
                     Подтвердить альтернативу

@@ -64,7 +64,7 @@
 ### Task 5: Readiness, review and reusable setup
 
 **Files:** README.md, .env.example, docs/host-guide.md, docs/implementation-progress.md.
-- [ ] Exercise built application, 20 connections and both cases; inspect desktop/mobile screenshots.
-- [ ] Request an independent whole-branch review and fix material findings with regression tests.
-- [ ] Save tested install/start steps in cloud environment draft; describe external hosting needs without claiming deployment.
-- [ ] Run `npm test`, `npm run typecheck`, `npm run build`, `npm run test:e2e`; record actual results and limitations.
+- [x] Exercise built application, 20 connections and both cases; inspect desktop/mobile screenshots.
+- [x] Request an independent whole-branch review and fix material findings with regression tests.
+- [x] Save tested install/start steps in cloud environment draft; describe external hosting needs without claiming deployment.
+- [x] Run `npm test`, `npm run typecheck`, `npm run build`, `npm run test:e2e`; record actual results and limitations.

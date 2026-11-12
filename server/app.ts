@@ -122,6 +122,7 @@ export function createApp(options: {
   ): Round {
     return {
       id: randomUUID(),
+      createdAt: now(),
       caseId,
       caseData: structuredClone(s.content.cases[caseId]),
       contentVersion: s.content.version,
@@ -153,6 +154,7 @@ export function createApp(options: {
         }
         if (left === 0) {
           r.status = "finished";
+          r.finishedAt = r.deadline ?? now();
           r.remainingMs = 0;
           r.deadline = null;
           r.step = 5;
@@ -161,12 +163,14 @@ export function createApp(options: {
         }
       }
     }
-    if (changed) store.commit(s);
+    if (changed) {
+      store.commit(s);
+      broadcast(s.id);
+    }
     return changed;
   }
   function view(a: Access): View {
     const s = session(a);
-    settle(s);
     return {
       role: a.role,
       teamId: a.teamId,
@@ -199,6 +203,7 @@ export function createApp(options: {
     next();
   });
   io.on("connection", (socket) => {
+    settle(session(socket.data.access));
     socket.emit("state", view(socket.data.access));
   });
 
@@ -309,7 +314,11 @@ export function createApp(options: {
     if (a) broadcast(a.sessionId);
     res.clearCookie("hr_game", { path: "/" }).json({ ok: true });
   });
-  app.get("/api/state", (req, res) => res.json(view(access(req))));
+  app.get("/api/state", (req, res) => {
+    const a = access(req);
+    settle(session(a));
+    res.json(view(a));
+  });
   app.post("/api/teams/:id/command", (req, res) => {
     const a = access(req),
       s = session(a),
@@ -317,7 +326,9 @@ export function createApp(options: {
     settle(s);
     const r = t.round,
       cmd = commandBase.parse(req.body);
-    const commandKey = `${s.id}:${r.id}:${cookieValue(req.headers.cookie)}:${cmd.id}`;
+    if (cmd.roundId !== r.id)
+      fail(409, "Этот раунд уже сменился. Откройте актуальный кейс.");
+    const commandKey = `${s.id}:${cmd.roundId}:${cookieValue(req.headers.cookie)}:${cmd.id}`;
     if (store.seen(commandKey)) return res.json(view(a));
     const editable = a.role === "captain" || a.role === "curator";
     if (["section", "step", "proposalDecision"].includes(cmd.type) && !editable)
@@ -437,6 +448,7 @@ export function createApp(options: {
       switch (d.action) {
         case "start":
           if (r.status === "waiting") {
+            r.startedAt = now();
             r.status = "running";
             r.deadline = now() + r.remainingMs;
             r.revision++;
@@ -471,6 +483,7 @@ export function createApp(options: {
           break;
         }
         case "finish":
+          r.finishedAt = now();
           r.remainingMs = remaining(r, now());
           r.deadline = null;
           r.status = "finished";
@@ -559,7 +572,7 @@ export function createApp(options: {
       res
         .set({
           "Content-Type": "application/pdf",
-          "Content-Disposition": `attachment; filename="change-plan-${t.code}.pdf"`,
+          "Content-Disposition": `attachment; filename="change-plan-${t.id}-${r.id}.pdf"`,
         })
         .send(data);
     } catch (e) {
@@ -579,12 +592,10 @@ export function createApp(options: {
       _next: express.NextFunction,
     ) => {
       if (err instanceof z.ZodError)
-        return res
-          .status(400)
-          .json({
-            error: "Проверьте заполнение полей",
-            details: err.issues.map((i) => `${i.path.join(".")}: ${i.message}`),
-          });
+        return res.status(400).json({
+          error: "Проверьте заполнение полей",
+          details: err.issues.map((i) => `${i.path.join(".")}: ${i.message}`),
+        });
       if (err instanceof HttpError)
         return res.status(err.status).json({ error: err.message });
       if (err instanceof SyntaxError)
@@ -599,7 +610,7 @@ export function createApp(options: {
     },
   );
   const interval = setInterval(() => {
-    for (const s of store.all()) if (settle(s)) broadcast(s.id);
+    for (const s of store.all()) settle(s);
   }, 1000);
   interval.unref();
   let closed = false;

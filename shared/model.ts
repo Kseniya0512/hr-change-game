@@ -111,6 +111,9 @@ export interface Comment {
 }
 export interface Round {
   id: string;
+  createdAt: number;
+  startedAt?: number;
+  finishedAt?: number;
   caseId: CaseId;
   caseData: CaseData;
   contentVersion: string;

@@ -120,6 +120,91 @@ test("an unconfirmed draft survives moving between screens", async ({
     "Ещё обсуждаем эту формулировку",
   );
 });
+test("draft survives navigating while the host pauses and resumes", async ({
+  page,
+  request,
+}) => {
+  const response = await request.post("/api/sessions", {
+    data: {
+      hostKey: key,
+      title: "Черновик на паузе",
+      teamCount: 2,
+      durationMinutes: 30,
+    },
+  });
+  const data = await response.json();
+  await request.post("/api/access", { data: { token: data.hostInvite } });
+  await request.post(`/api/sessions/${data.sessionId}/control`, {
+    data: { action: "start" },
+  });
+  await join(page, data.teams[0].captainInvite);
+  await page.getByLabel("Цель изменения").fill("Сохраняем обсуждение");
+  await request.post(`/api/sessions/${data.sessionId}/control`, {
+    data: { action: "pause" },
+  });
+  await expect(
+    page.getByText(
+      "Ведущий приостановил раунд. Подтверждённые ответы сохранены.",
+    ),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /Оценка изменения/ }).click();
+  await page.getByRole("button", { name: /Получена инициатива/ }).click();
+  await request.post(`/api/sessions/${data.sessionId}/control`, {
+    data: { action: "resume" },
+  });
+  await expect(page.getByLabel("Цель изменения")).toBeEnabled();
+  await expect(page.getByLabel("Цель изменения")).toHaveValue(
+    "Сохраняем обсуждение",
+  );
+});
+test("failed curator submissions retain comments and alternatives", async ({
+  page,
+  request,
+}) => {
+  const response = await request.post("/api/sessions", {
+    data: {
+      hostKey: key,
+      title: "Сбой отправки",
+      teamCount: 2,
+      durationMinutes: 30,
+    },
+  });
+  const data = await response.json();
+  await request.post("/api/access", { data: { token: data.hostInvite } });
+  await request.post(`/api/sessions/${data.sessionId}/control`, {
+    data: { action: "start" },
+  });
+  await request.post(`/api/sessions/${data.sessionId}/control`, {
+    data: { action: "event", teamId: data.teams[0].id },
+  });
+  await join(page, data.teams[0].curatorInvite);
+  await page.route("**/api/teams/*/command", (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ error: "Проверка временного сбоя" }),
+    }),
+  );
+  await page.getByLabel("Комментарий команде").fill("Важный комментарий");
+  await page.getByRole("button", { name: "Оставить комментарий" }).click();
+  await expect(page.getByRole("alert")).toContainText(
+    "Проверка временного сбоя",
+  );
+  await expect(page.getByLabel("Комментарий команде")).toHaveValue(
+    "Важный комментарий",
+  );
+  await page
+    .getByLabel("Обоснование альтернативного решения")
+    .fill("Наше обоснование");
+  await page.getByRole("button", { name: "Подтвердить альтернативу" }).click();
+  await expect(
+    page.getByLabel("Обоснование альтернативного решения"),
+  ).toHaveValue("Наше обоснование");
+  await expect(page.getByLabel("Комментарий команде")).toHaveAttribute(
+    "maxlength",
+    "2000",
+  );
+});
 test("visible countdown advances without another participant changing the plan", async ({
   page,
   request,

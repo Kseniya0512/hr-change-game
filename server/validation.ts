@@ -136,6 +136,7 @@ export const contentSchema = z
 export const commandBase = z
   .object({
     id: id,
+    roundId: id,
     type: z.enum([
       "section",
       "step",

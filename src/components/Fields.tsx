@@ -9,6 +9,7 @@ export function Field({
   multiline = false,
   placeholder = "",
   type = "text",
+  maxLength,
 }: {
   label: string;
   value: string;
@@ -17,6 +18,7 @@ export function Field({
   multiline?: boolean;
   placeholder?: string;
   type?: string;
+  maxLength?: number;
 }) {
   return (
     <label className="field">
@@ -27,7 +29,7 @@ export function Field({
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           placeholder={placeholder}
-          maxLength={4000}
+          maxLength={maxLength ?? 4000}
           rows={3}
         />
       ) : (
@@ -37,7 +39,7 @@ export function Field({
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           placeholder={placeholder}
-          maxLength={type === "password" ? 300 : 240}
+          maxLength={maxLength ?? (type === "password" ? 300 : 240)}
         />
       )}
     </label>

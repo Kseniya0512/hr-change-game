@@ -38,6 +38,7 @@ type Props = {
   team: Team;
   step: number;
   editable: boolean;
+  ownsDraft: boolean;
   save: SaveSection;
   navigate: (step: number) => void;
   canExport: boolean;
@@ -47,6 +48,7 @@ export function GameScreens({
   team,
   step,
   editable,
+  ownsDraft,
   save,
   navigate,
   canExport,
@@ -91,6 +93,7 @@ export function GameScreens({
           section="initiative"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(v, set, d) => (
@@ -145,6 +148,7 @@ export function GameScreens({
           section="assessment"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(v, set, d) => (
@@ -278,6 +282,7 @@ export function GameScreens({
           section="stakeholders"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(rows, set, d) => (
@@ -394,6 +399,7 @@ export function GameScreens({
           section="sponsor"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(v, set, d) => (
@@ -446,7 +452,14 @@ export function GameScreens({
       </>
     );
   if (step === 3)
-    return <PlanBuilder round={r} editable={editable} save={save} />;
+    return (
+      <PlanBuilder
+        round={r}
+        editable={editable}
+        ownsDraft={ownsDraft}
+        save={save}
+      />
+    );
   if (step === 4)
     return (
       <>
@@ -474,6 +487,7 @@ export function GameScreens({
               section="eventResponse"
               round={r}
               editable={editable}
+              ownsDraft={ownsDraft}
               save={save}
             >
               {(v, set, d) => (
@@ -539,6 +553,7 @@ export function GameScreens({
         section="openQuestions"
         round={r}
         editable={editable}
+        ownsDraft={ownsDraft}
         save={save}
       >
         {(v, set, d) => (
@@ -555,6 +570,7 @@ export function GameScreens({
         section="ceiQuestions"
         round={r}
         editable={editable}
+        ownsDraft={ownsDraft}
         save={save}
       >
         {(v, set, d) => (
@@ -602,10 +618,12 @@ export function ScreenLead({
 function PlanBuilder({
   round: r,
   editable,
+  ownsDraft,
   save,
 }: {
   round: Round;
   editable: boolean;
+  ownsDraft: boolean;
   save: SaveSection;
 }) {
   const [tab, setTab] = useState(0);
@@ -635,6 +653,7 @@ function PlanBuilder({
           section="actions"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(rows, set, d) => (
@@ -754,6 +773,7 @@ function PlanBuilder({
           section="communications"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(rows, set, d) => (
@@ -860,6 +880,7 @@ function PlanBuilder({
           section="risks"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(rows, set, d) => (
@@ -955,6 +976,7 @@ function PlanBuilder({
           section="support"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(v, set, d) => (
@@ -1020,6 +1042,7 @@ function PlanBuilder({
           section="metrics"
           round={r}
           editable={editable}
+          ownsDraft={ownsDraft}
           save={save}
         >
           {(rows, set, d) => (

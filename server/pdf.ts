@@ -38,7 +38,7 @@ export function renderPlanPdf(team: Team, round: Round): Promise<Buffer> {
       .fontSize(11)
       .fillColor("#485b56")
       .text(
-        `${team.name} · ${round.caseData.title}\nПервоначальный план по итогам учебного воркшопа\nВерсия материалов: ${round.contentVersion}`,
+        `${team.name} · ${round.caseData.title}\nПервоначальный план по итогам учебного воркшопа\nДата раунда: ${new Date(round.startedAt ?? round.createdAt).toLocaleString("ru-RU", { timeZone: "Europe/Samara" })} (Самара)\nВерсия материалов: ${round.contentVersion}`,
       );
     doc.moveDown(1);
     for (const section of summarySections(round)) {

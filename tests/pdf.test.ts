@@ -10,6 +10,7 @@ import { join } from "node:path";
 it("exports an actual Cyrillic PDF with all sections and unfinished questions", async () => {
   const round: Round = {
     id: "round",
+    createdAt: Date.UTC(2026, 10, 12, 10, 0),
     caseId: "medical",
     caseData: defaultContent.cases.medical,
     criteria: defaultContent.criteria,
@@ -47,6 +48,7 @@ it("exports an actual Cyrillic PDF with all sections and unfinished questions", 
     expect(text).toContain("13. Что уточнить совместно с ЦЭИ");
     expect(text).toContain("Уточнить переходный период");
     expect(text).toContain("42 000");
+    expect(text).toContain("12.11.2026");
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

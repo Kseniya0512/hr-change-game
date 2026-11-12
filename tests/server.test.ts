@@ -88,6 +88,7 @@ describe("real workshop server", () => {
     const team = (await view(captain)).teams[0];
     const command = {
       id: "confirm-1",
+      roundId: team.round.id,
       type: "section",
       expectedRevision: team.round.revision,
       section: "initiative",
@@ -107,6 +108,7 @@ describe("real workshop server", () => {
       .set("Cookie", participant)
       .send({
         id: "proposal-1",
+        roundId: team.round.id,
         type: "proposal",
         section: "initiative",
         text: "Давайте подготовим руководителей",
@@ -127,7 +129,12 @@ describe("real workshop server", () => {
     await request(base)
       .post(`/api/teams/${team.id}/command`)
       .set("Cookie", participant)
-      .send({ id: "alt", type: "alternative", reason: "Так решили" })
+      .send({
+        id: "alt",
+        roundId: team.round.id,
+        type: "alternative",
+        reason: "Так решили",
+      })
       .expect(403);
   });
   it("rejects stale writes; repeated command does not create a second proposal", async () => {
@@ -135,6 +142,7 @@ describe("real workshop server", () => {
     const t = (await view(captain)).teams[0];
     const cmd = {
       id: "same",
+      roundId: t.round.id,
       type: "proposal",
       section: "risks",
       text: "Проверить переходные условия",
@@ -152,6 +160,7 @@ describe("real workshop server", () => {
     expect((await view(participant)).teams[0].round.proposals).toHaveLength(1);
     const write = {
       id: "a",
+      roundId: t.round.id,
       type: "section",
       expectedRevision: t.round.revision,
       section: "openQuestions",
@@ -178,6 +187,7 @@ describe("real workshop server", () => {
       .set("Cookie", captain)
       .send({
         id: "wait",
+        roundId: t.round.id,
         type: "section",
         expectedRevision: 0,
         section: "openQuestions",
@@ -190,6 +200,7 @@ describe("real workshop server", () => {
       .set("Cookie", captain)
       .send({
         id: "bad",
+        roundId: t.round.id,
         type: "section",
         expectedRevision: 1,
         section: "metrics",
@@ -212,6 +223,7 @@ describe("real workshop server", () => {
       .set("Cookie", captain)
       .send({
         id: "save",
+        roundId: t.round.id,
         type: "section",
         expectedRevision: t.round.revision,
         section: "ceiQuestions",
@@ -294,6 +306,7 @@ describe("real workshop server", () => {
       .set("Cookie", captain)
       .send({
         id: "safe",
+        roundId: t.round.id,
         type: "section",
         expectedRevision: t.round.revision,
         section: "openQuestions",
@@ -303,6 +316,81 @@ describe("real workshop server", () => {
     const keys = app.store.db.prepare("SELECT key FROM commands").all();
     expect(JSON.stringify(keys)).not.toContain(
       captain.slice("hr_game=".length),
+    );
+  });
+  it("rejects section and proposal commands belonging to a previous round", async () => {
+    await control("start");
+    const old = (await view(captain)).teams[0].round;
+    await control("finish");
+    await control("newRound", {
+      teamId: invites.teams[0].id,
+      caseId: "medical",
+    });
+    await control("start");
+    for (const body of [
+      {
+        type: "section",
+        section: "openQuestions",
+        value: "Ответ прежнего кейса",
+        expectedRevision: old.revision,
+      },
+      {
+        type: "proposal",
+        section: "openQuestions",
+        text: "Предложение прежнего кейса",
+      },
+    ])
+      await request(base)
+        .post(`/api/teams/${invites.teams[0].id}/command`)
+        .set("Cookie", captain)
+        .send({ id: `old-${body.type}`, roundId: old.id, ...body })
+        .expect(409);
+    const current = (await view(captain)).teams[0].round;
+    expect(current.plan.openQuestions).toBe("");
+    expect(current.proposals).toHaveLength(0);
+  });
+  it.each(["event", "finish"])(
+    "broadcasts an automatic %s transition first discovered by a state read",
+    async (kind) => {
+      await control("start");
+      const socket = connect(base, {
+        transports: ["websocket"],
+        extraHeaders: { Cookie: participant },
+        forceNew: true,
+        reconnection: false,
+      });
+      const states: View[] = [];
+      socket.on("state", (v) => states.push(v));
+      try {
+        await new Promise<void>((resolve, reject) => {
+          socket.once("state", () => resolve());
+          socket.once("connect_error", reject);
+        });
+        now += (kind === "event" ? 23 : 30) * 60000;
+        await view(host);
+        await expect
+          .poll(
+            () =>
+              states.some((v) =>
+                kind === "event"
+                  ? !!v.teams[0].round.event
+                  : v.teams[0].round.status === "finished",
+              ),
+            { timeout: 1800 },
+          )
+          .toBe(true);
+      } finally {
+        socket.disconnect();
+      }
+    },
+  );
+  it("does not disclose a team join code in an exported filename", async () => {
+    const result = await request(base)
+      .get(`/api/teams/${invites.teams[0].id}/export.pdf`)
+      .set("Cookie", captain)
+      .expect(200);
+    expect(result.headers["content-disposition"]).not.toContain(
+      invites.teams[0].code,
     );
   });
   it("delivers confirmed updates to 20 authenticated clients and rejects foreign room access", async () => {
@@ -336,6 +424,7 @@ describe("real workshop server", () => {
         .set("Cookie", captain)
         .send({
           id: "sync",
+          roundId: t.round.id,
           type: "section",
           expectedRevision: t.round.revision,
           section: "openQuestions",

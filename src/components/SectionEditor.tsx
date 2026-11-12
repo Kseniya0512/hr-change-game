@@ -13,12 +13,14 @@ export function SectionEditor<K extends PlanSection>({
   section,
   round,
   editable,
+  ownsDraft,
   save,
   children,
 }: {
   section: K;
   round: Round;
   editable: boolean;
+  ownsDraft: boolean;
   save: (
     section: PlanSection,
     value: unknown,
@@ -31,7 +33,7 @@ export function SectionEditor<K extends PlanSection>({
   ) => ReactNode;
 }) {
   const draftKey = `${round.id}:${section}`,
-    cached = editable ? drafts.get(draftKey) : undefined;
+    cached = ownsDraft ? drafts.get(draftKey) : undefined;
   const [draft, setDraft] = useState<Plan[K]>(() =>
       structuredClone(cached ? (cached.value as Plan[K]) : round.plan[section]),
     ),
