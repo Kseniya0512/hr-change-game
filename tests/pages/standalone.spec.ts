@@ -1,0 +1,77 @@
+import { test, expect } from '@playwright/test';
+import { execFileSync } from 'node:child_process';
+test('Pages works on a repository subpath without an API, restores both cases and prints all sections', async ({ page }) => {
+ const requests: string[] = [];
+ page.on('request', r => { if (/\/api\/|\/socket.io/.test(r.url())) requests.push(r.url()); });
+ await page.goto('./');
+ await expect(page.getByRole('heading', { name: 'Управляй изменением', exact: true })).toBeVisible();
+ await expect(page.getByText(/Индивидуальный режим/)).toBeVisible();
+ await page.getByLabel('Цель изменения').fill('Понятный переход к новым условиям');
+ await page.getByRole('button', { name: 'Сохранить блок', exact: true }).click();
+ await expect(page.getByText('План сохранён в этом браузере', { exact: true })).toBeVisible();
+ await page.reload();
+ await expect(page.getByLabel('Цель изменения')).toHaveValue('Понятный переход к новым условиям');
+ await page.getByLabel('Учебный кейс').selectOption('medical');
+ await expect(page.getByLabel('Цель изменения')).toHaveValue('');
+ await page.getByLabel('Цель изменения').fill('Доступная поддержка при переходе');
+ await page.getByRole('button', { name: 'Сохранить блок', exact: true }).click();
+ await page.getByLabel('Учебный кейс').selectOption('bonus');
+ await expect(page.getByLabel('Цель изменения')).toHaveValue('Понятный переход к новым условиям');
+ await page.getByRole('button', { name: 'Открыть событие', exact: true }).click();
+ await expect(page.getByRole('heading', { name: 'До запуска остался юридический вопрос' })).toBeVisible();
+ await page.getByRole('button', { name: /Наш план готов/ }).click();
+ await page.setViewportSize({ width: 390, height: 844 });
+ expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+ await page.screenshot({ path: 'test-results/pages-mobile.png', fullPage: true });
+ await page.emulateMedia({ media: 'print' });
+ await expect(page.locator('.standalone-print')).toBeVisible();
+ await expect(page.locator('.standalone-controls')).not.toBeVisible();
+ const pdf = test.info().outputPath('plan.pdf');
+ await page.pdf({ path: pdf, format: 'A4' });
+ const text = execFileSync('pdftotext', [pdf, '-'], { encoding: 'utf8' });
+ expect(text).toContain('13. Что уточнить совместно с ЦЭИ');
+ expect(text).toContain('Понятный переход к новым условиям');
+ expect(requests).toEqual([]);
+});
+test('a failed browser save keeps the edited text available', async ({ page }) => {
+ await page.addInitScript(() => {
+  const original = Storage.prototype.setItem;
+  Storage.prototype.setItem = function(key, value) {
+   if ((window as unknown as { blockSave?: boolean }).blockSave) throw new Error('QuotaExceeded');
+   return original.call(this, key, value);
+  };
+ });
+ await page.goto('./');
+ await page.getByLabel('Цель изменения').fill('Не терять этот текст');
+ await page.evaluate(() => { (window as unknown as { blockSave: boolean }).blockSave = true; });
+ await page.getByRole('button', { name: 'Сохранить блок', exact: true }).click();
+ await expect(page.getByText(/Не удалось сохранить план/)).toBeVisible();
+ await expect(page.getByLabel('Цель изменения')).toHaveValue('Не терять этот текст');
+ await page.evaluate(() => { (window as unknown as { blockSave: boolean }).blockSave = false; });
+ await page.getByRole('button', { name: 'Сохранить блок', exact: true }).click();
+ await page.reload();
+ await expect(page.getByLabel('Цель изменения')).toHaveValue('Не терять этот текст');
+});
+test('a cached draft cannot overwrite a newer answer after switching cases', async ({ page, context }) => {
+ await page.goto('./');
+ await page.getByLabel('Цель изменения').fill('Черновик первой вкладки');
+ const other = await context.newPage();
+ await other.goto('./');
+ await other.getByLabel('Цель изменения').fill('Новый ответ второй вкладки');
+ await other.getByRole('button', { name: 'Сохранить блок', exact: true }).click();
+ await page.getByLabel('Учебный кейс').selectOption('medical');
+ await page.getByLabel('Учебный кейс').selectOption('bonus');
+ await expect(page.getByLabel('Цель изменения')).toHaveValue('Черновик первой вкладки');
+ await page.getByRole('button', { name: 'Сохранить блок', exact: true }).click();
+ await expect(page.getByText(/Ответ изменился в другой вкладке/)).toBeVisible();
+ await other.reload();
+ await expect(other.getByLabel('Цель изменения')).toHaveValue('Новый ответ второй вкладки');
+});
+test('a local draft can be saved after navigation changes only the screen', async ({ page }) => {
+ await page.goto('./');
+ await page.getByLabel('Цель изменения').fill('Черновик после переходов');
+ await page.getByRole('button', { name: /Оценка изменения/ }).click();
+ await page.getByRole('button', { name: /Получена инициатива/ }).click();
+ await page.getByRole('button', { name: 'Сохранить блок', exact: true }).click();
+ await expect(page.getByText('План сохранён в этом браузере', { exact: true })).toBeVisible();
+});

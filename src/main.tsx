@@ -1,9 +1,11 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+const App = lazy(() => import.meta.env.MODE === "pages"
+  ? import("./StandaloneApp.tsx")
+  : import("./App.tsx"));
 import "./styles.css";
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <Suspense fallback={<p className="notice">Загружаем игру…</p>}><App /></Suspense>
   </React.StrictMode>,
 );

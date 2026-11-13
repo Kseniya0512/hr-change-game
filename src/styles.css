@@ -2134,3 +2134,32 @@ button {
 }
 .event-preparation p { margin: 8px 0; }
 .event-preparation ul { margin: 12px 0 0; padding-left: 20px; }
+
+.standalone-header { gap: 18px; flex-wrap: wrap; height: auto; min-height: 89px; }
+.standalone-header h1 { font-size: 1.12rem; margin: 0 auto 0 0; }
+.standalone-controls { padding: 22px 28px; background: #f2f5ee; border-bottom: 1px solid #dce3d8; }
+.standalone-notice { margin: 0 0 16px; font-size: .9rem; }
+.standalone-toolbar { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; }
+.standalone-toolbar .field { min-width: 260px; flex: 1; max-width: 430px; margin: 0; }
+.standalone-controls > .fine { margin-top: 12px; }
+.standalone-error { margin: 20px; }
+.standalone-workspace { display: grid; grid-template-columns: 225px minmax(0,1fr); min-height: calc(100vh - 240px); }
+.standalone-workspace .game-main { max-width: 1050px; width: 100%; margin: 0 auto; }
+.standalone-workspace .journey { min-width: 0; }
+.standalone-print { display: none; }
+@media (max-width: 900px) {
+ .standalone-workspace { grid-template-columns: minmax(0,1fr); }
+ .standalone-header { padding: 18px; }
+ .standalone-header h1 { font-size: 1rem; }
+ .standalone-controls { padding: 18px; }
+ .standalone-toolbar .field { min-width: 0; max-width: 100%; flex-basis: 100%; }
+ .standalone-workspace .journey { border-right: 0; }
+}
+@media print {
+ @page { size: A4; margin: 16mm; }
+ .standalone-shell > :not(.standalone-print) { display: none !important; }
+ .standalone-print { display: block !important; color: #111; background: #fff; font-family: Arial, sans-serif; font-size: 10pt; }
+ .standalone-print h1 { font-size: 18pt; margin-bottom: 14pt; }
+ .standalone-print h2 { font-size: 12pt; margin: 15pt 0 6pt; break-after: avoid; }
+ .standalone-print p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; }
+}
