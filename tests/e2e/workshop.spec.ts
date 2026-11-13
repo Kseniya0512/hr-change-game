@@ -120,6 +120,32 @@ test("an unconfirmed draft survives moving between screens", async ({
     "Ещё обсуждаем эту формулировку",
   );
 });
+test("a linked custom action survives refresh and appears as a prepared event response", async ({ page, request }) => {
+  const response = await request.post("/api/sessions", { data: { hostKey: key, title: "Связанный план", teamCount: 2, durationMinutes: 30 } });
+  const data = await response.json();
+  await request.post("/api/access", { data: { token: data.hostInvite } });
+  await request.post(`/api/sessions/${data.sessionId}/control`, { data: { action: "start" } });
+  await join(page, data.teams[0].captainInvite);
+  await page.getByRole("button", { name: /Собери план внедрения/ }).click();
+  await page.getByRole("button", { name: "Своё действие", exact: true }).click();
+  await page.getByLabel("Действие", { exact: true }).fill("Уточнить исходные условия с владельцем");
+  await page.getByLabel("Ответственный", { exact: true }).fill("HR");
+  await page.getByLabel("Когда", { exact: true }).fill("До объявления");
+  await page.getByText("Связать с рисками", { exact: false }).click();
+  await page.getByRole("checkbox", { name: "Юридические ограничения", exact: true }).check();
+  await page.getByRole("button", { name: "Зафиксировать блок" }).click();
+  await expect(page.getByText("Решение команды сохранено", { exact: true })).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", { name: /Собери план внедрения/ }).click();
+  await expect(page.getByLabel("Действие", { exact: true })).toHaveValue("Уточнить исходные условия с владельцем");
+  await page.getByText("Связать с рисками", { exact: false }).click();
+  await expect(page.getByRole("checkbox", { name: "Юридические ограничения", exact: true })).toBeChecked();
+  await request.post(`/api/sessions/${data.sessionId}/control`, { data: { action: "event", teamId: data.teams[0].id, eventId: "bonus-legal" } });
+  await page.getByRole("button", { name: /Неожиданное событие/ }).click();
+  await expect(page.getByRole("heading", { name: "В плане уже есть связанный ответ" })).toBeVisible();
+  await expect(page.getByText("Уточнить исходные условия с владельцем", { exact: true })).toBeVisible();
+  await page.screenshot({ path: "test-results/event-linked.png", fullPage: true });
+});
 test("draft survives navigating while the host pauses and resumes", async ({
   page,
   request,

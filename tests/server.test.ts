@@ -271,6 +271,51 @@ describe("real workshop server", () => {
       "Изменённый кейс",
     );
   });
+  it("persists explicit plan links and selects the uncovered event after restart", async () => {
+    await control("start").expect(200);
+    const team = (await view(captain)).teams[0];
+    let commandNumber = 0;
+    async function save(section: string, value: unknown) {
+      const current = (await view(captain)).teams[0].round;
+      return request(base).post(`/api/teams/${team.id}/command`).set("Cookie", captain)
+        .send({ id: `linked-${section}-${++commandNumber}`, roundId: current.id, type: "section", section, value, expectedRevision: current.revision });
+    }
+    expect((await save("actions", [{ id: "a", text: "Проверка исходных условий", stage: "Подготовка", owner: "HR", when: "До запуска", riskIds: ["legal"] }])).status).toBe(200);
+    // Inspect the actual server state: links must be accepted, not just retained by the browser.
+    expect((await view(participant)).teams[0].round.plan.actions[0]?.riskIds).toEqual(["legal"]);
+    expect((await save("communications", [{ id: "c", audience: "Команда", message: "Учебные примеры", channel: "Teams", owner: "HR", when: "До объявления", riskIds: ["income"] }])).status).toBe(200);
+    const risk = { ...(await view(captain)).teams[0].round.caseData.risks[2], id: "custom-risk", riskIds: ["trust"] };
+    expect((await save("risks", [risk])).status).toBe(200);
+    await control("event", { teamId: team.id }).expect(200);
+    expect((await view(participant)).teams[0].round.event?.id).toBe("bonus-leaders");
+    await app.close();
+    app = createApp({ dbPath: join(dir, "game.sqlite"), hostKey: key, now: () => now });
+    base = await app.listen(0);
+    const restored = (await view(participant)).teams[0].round;
+    expect(restored.plan.actions[0].riskIds).toEqual(["legal"]);
+    expect(restored.plan.communications[0].riskIds).toEqual(["income"]);
+    expect(restored.plan.risks[0].riskIds).toEqual(["trust"]);
+    expect(restored.event?.riskIds).toEqual(["leaders"]);
+    const revision = restored.revision;
+    const invalid = await save("actions", [{ ...restored.plan.actions[0], riskIds: [42] }]);
+    expect(invalid.status).toBe(400);
+    expect((await view(captain)).teams[0].round.revision).toBe(revision);
+  });
+  it("accepts editable event links, rejects unknown risk IDs and accepts legacy content", async () => {
+    const content = structuredClone((await view(host)).session.content);
+    content.cases.bonus.events[0].riskIds = ["legal", "transition"];
+    const update = () => request(base).put("/api/content").set("Cookie", host).send({ content });
+    await update().expect(200);
+    expect((await view(captain)).teams[0].round.caseData.events[0].riskIds).toEqual(["legal", "transition"]);
+    content.cases.bonus.events[0].riskIds = ["missing-risk"];
+    await update().expect(400);
+    expect((await view(captain)).teams[0].round.caseData.events[0].riskIds).toEqual(["legal", "transition"]);
+    for (const data of Object.values(content.cases)) data.events.forEach((e) => delete e.riskIds);
+    await update().expect(200);
+    await control("start").expect(200);
+    await control("event", { teamId: invites.teams[0].id }).expect(200);
+    expect((await view(captain)).teams[0].round.event?.id).toBe("bonus-legal");
+  });
   it("revokes previous captain invitations and active cookies", async () => {
     const r = await control("rotateCaptain", {
       teamId: invites.teams[0].id,

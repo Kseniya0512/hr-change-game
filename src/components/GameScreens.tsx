@@ -16,7 +16,7 @@ import type {
   Stage,
   Team,
 } from "../../shared/model.ts";
-import { frameworkResult, completion } from "../../shared/plan.ts";
+import { frameworkResult, completion, preparedResponses } from "../../shared/plan.ts";
 import { summarySections } from "../../shared/summary.ts";
 import { uid } from "../api.ts";
 import {
@@ -28,6 +28,7 @@ import {
   StageSelect,
 } from "./Fields.tsx";
 import { SectionEditor } from "./SectionEditor.tsx";
+import { RiskLinks } from "./RiskLinks.tsx";
 export type SaveSection = (
   section: PlanSection,
   value: unknown,
@@ -479,6 +480,23 @@ export function GameScreens({
               <p>{r.event.text}</p>
               <b>{r.event.prompt}</b>
             </div>
+            <section className="event-preparation" aria-label="Связь события с планом">
+              {preparedResponses(r.plan, r.event).length > 0 ? (
+                <>
+                  <h3>В плане уже есть связанный ответ</h3>
+                  <p>Обсудите, как применить его в этой ситуации.</p>
+                  <ul>
+                    {preparedResponses(r.plan, r.event).map((text) => <li key={text}>{text}</li>)}
+                  </ul>
+                </>
+              ) : (
+                <p>
+                  Связанный ответ ещё не отмечен. Покажите подготовленное решение
+                  или дополните план. Если решение записано в другом месте,
+                  обсудите его с куратором.
+                </p>
+              )}
+            </section>
             <button className="button soft" onClick={() => navigate(3)}>
               Открыть конструктор плана
               <ArrowRight size={17} />
@@ -745,6 +763,12 @@ function PlanBuilder({
                       placeholder="Например, до объявления"
                     />
                   </div>
+                  <RiskLinks
+                    risks={r.caseData.risks}
+                    value={row.riskIds}
+                    disabled={d}
+                    onChange={(riskIds) => set(rows.map((x, n) => n === i ? { ...x, riskIds } : x))}
+                  />
                 </div>
               ))}
               <AddButton
@@ -851,6 +875,12 @@ function PlanBuilder({
                       }
                     />
                   </div>
+                  <RiskLinks
+                    risks={r.caseData.risks}
+                    value={row.riskIds}
+                    disabled={d}
+                    onChange={(riskIds) => set(rows.map((x, n) => n === i ? { ...x, riskIds } : x))}
+                  />
                 </div>
               ))}
               <AddButton
@@ -947,6 +977,14 @@ function PlanBuilder({
                       }
                     />
                   ))}
+                  {!r.caseData.risks.some((risk) => risk.id === row.id) && (
+                    <RiskLinks
+                      risks={r.caseData.risks}
+                      value={row.riskIds}
+                      disabled={d}
+                      onChange={(riskIds) => set(rows.map((x, n) => n === i ? { ...x, riskIds } : x))}
+                    />
+                  )}
                 </div>
               ))}
               <AddButton

@@ -143,6 +143,7 @@ const bonus: CaseData = {
   events: [
     {
       id: "bonus-legal",
+      riskIds: ["legal"],
       title: "До запуска остался юридический вопрос",
       text: "Юридическая функция обнаружила вопрос, который нужно урегулировать до запуска. Как команда изменит свой план?",
       focus: "actions",
@@ -151,6 +152,7 @@ const bonus: CaseData = {
     },
     {
       id: "bonus-income",
+      riskIds: ["income"],
       title: "«А что будет с моим годовым доходом?»",
       text: "Руководители не могут объяснить сотрудникам, как изменится годовой доход.",
       focus: "communications",
@@ -159,6 +161,7 @@ const bonus: CaseData = {
     },
     {
       id: "bonus-trust",
+      riskIds: ["trust"],
       title: "Много вопросов о справедливости",
       text: "В канале вопросов растёт число обращений о справедливости решения.",
       focus: "support",
@@ -167,6 +170,7 @@ const bonus: CaseData = {
     },
     {
       id: "bonus-leaders",
+      riskIds: ["leaders"],
       title: "Руководители узнали вместе с командами",
       text: "Часть руководителей получила анонс одновременно с сотрудниками и не готова к обсуждению.",
       focus: "communications",
@@ -314,6 +318,7 @@ const medical: CaseData = {
   events: [
     {
       id: "medical-policies",
+      riskIds: ["policies"],
       title: "Что будет с действующими полисами?",
       text: "Пользователи ДМС не понимают, до какой даты действуют их полисы и как организован переход.",
       focus: "actions",
@@ -322,6 +327,7 @@ const medical: CaseData = {
     },
     {
       id: "medical-cash",
+      riskIds: ["cash"],
       title: "«Мне трудно оплатить лечение заранее»",
       text: "Сотрудники жалуются на необходимость сначала оплачивать лечение самостоятельно.",
       focus: "risks",
@@ -330,6 +336,7 @@ const medical: CaseData = {
     },
     {
       id: "medical-leaders",
+      riskIds: ["leaders"],
       title: "Условия объясняют по-разному",
       text: "В разных командах руководители называют разные правила возмещения.",
       focus: "communications",
@@ -338,6 +345,7 @@ const medical: CaseData = {
     },
     {
       id: "medical-documents",
+      riskIds: ["documents"],
       title: "Какие чеки подходят?",
       text: "В поддержку пришло много вопросов о документах для компенсации.",
       focus: "support",
@@ -346,7 +354,7 @@ const medical: CaseData = {
   ],
 };
 export const defaultContent: WorkshopContent = {
-  version: "workshop-2026-11-12-v1",
+  version: "workshop-2026-11-13-v2",
   roles: [
     "Инициатор",
     "Куратор / спонсор изменения",

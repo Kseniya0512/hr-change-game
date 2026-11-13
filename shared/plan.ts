@@ -1,4 +1,4 @@
-import type { CaseData, CriterionAnswer, Plan, Round } from "./model.ts";
+import type { CaseData, CriterionAnswer, GameEvent, Plan, Round } from "./model.ts";
 export function emptyPlan(): Plan {
   return {
     initiative: { purpose: "", outcome: "", change: "" },
@@ -86,18 +86,27 @@ export function completion(p: Plan) {
     missing: checks.filter((c) => !c[1]).map((c) => c[0]),
   };
 }
-export function chooseEvent(data: CaseData, plan: Plan) {
-  if (!plan.actions.some((a) => /юрид|ограничен|полис|переход/i.test(a.text)))
-    return data.events[0];
-  if (!plan.communications.some((c) => /руковод/i.test(c.audience)))
-    return data.events.find((e) => e.id.endsWith("leaders")) || data.events[0];
-  if (!plan.support.owner)
-    return data.events.find((e) => e.focus === "support") || data.events[0];
-  return (
-    data.events.find((e) => e.focus === "risks") ||
-    data.events[1] ||
-    data.events[0]
-  );
+export function preparedResponses(plan: Plan, event: GameEvent): string[] {
+  const links = new Set(event.riskIds ?? []);
+  const linked = (ids: string[] = []) => ids.some((id) => links.has(id));
+  const filled = (...values: string[]) => values.every((value) => !!value.trim());
+  return [...new Set([
+    ...plan.actions
+      .filter((a) => linked(a.riskIds) && filled(a.text, a.owner, a.when))
+      .map((a) => a.text),
+    ...plan.communications
+      .filter((c) => linked(c.riskIds) && filled(c.audience, c.message, c.channel, c.owner, c.when))
+      .map((c) => c.message),
+    ...plan.risks
+      .filter((r) => linked([r.id, ...(r.riskIds ?? [])]) && filled(r.title, r.cause, r.consequence, r.prevention, r.response))
+      .map((r) => r.title),
+  ])];
+}
+export function chooseEvent(data: CaseData, plan: Plan): GameEvent {
+  const linkedEvents = data.events.filter((e) => e.riskIds?.length);
+  return linkedEvents.find((e) => preparedResponses(plan, e).length === 0)
+    ?? linkedEvents.find((e) => plan.risks.some((r) => e.riskIds!.some((id) => r.id === id || r.riskIds?.includes(id))))
+    ?? data.events[0];
 }
 export function remaining(round: Round, now = Date.now()) {
   return round.status === "running" && round.deadline !== null

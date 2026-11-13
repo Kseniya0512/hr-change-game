@@ -4,6 +4,7 @@ export type Stage = "Подготовка" | "Старт" | "Основная ч
 export type CriterionAnswer = "yes" | "no" | "unknown";
 export interface ActionRow {
   id: string;
+  riskIds?: string[];
   text: string;
   stage: Stage;
   owner: string;
@@ -18,6 +19,7 @@ export interface Stakeholder {
 }
 export interface Communication {
   id: string;
+  riskIds?: string[];
   audience: string;
   message: string;
   channel: string;
@@ -26,6 +28,7 @@ export interface Communication {
 }
 export interface Risk {
   id: string;
+  riskIds?: string[];
   title: string;
   cause: string;
   consequence: string;
@@ -68,6 +71,7 @@ export interface Plan {
 export type PlanSection = keyof Plan;
 export interface GameEvent {
   id: string;
+  riskIds?: string[];
   title: string;
   text: string;
   focus: PlanSection;

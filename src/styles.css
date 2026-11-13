@@ -2088,3 +2088,49 @@ button {
     scroll-behavior: auto !important;
   }
 }
+/* Optional links keep workshop events tied to explicit team choices. */
+.risk-links {
+  margin-top: 14px;
+  border-top: 1px solid var(--line, #dde5e0);
+  padding-top: 10px;
+}
+.risk-links summary {
+  cursor: pointer;
+  font-size: .88rem;
+  font-weight: 600;
+}
+.risk-links fieldset {
+  border: 0;
+  padding: 8px 0 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.risk-links legend { font-size: .85rem; }
+.risk-links label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  cursor: pointer;
+  font-size: .88rem;
+}
+.risk-links input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-top: 2px;
+  accent-color: #27634c;
+}
+.risk-links fieldset:disabled label { cursor: default; }
+.event-preparation {
+  background: #f0f5ef;
+  border: 1px solid #dce6d9;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+  overflow-wrap: anywhere;
+}
+.event-preparation p { margin: 8px 0; }
+.event-preparation ul { margin: 12px 0 0; padding-left: 20px; }

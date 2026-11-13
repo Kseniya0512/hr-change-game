@@ -3,12 +3,14 @@ const text = z.string().max(4000),
   short = z.string().max(240),
   id = z.string().min(1).max(100);
 const stage = z.enum(["Подготовка", "Старт", "Основная часть", "Завершение"]);
+const riskIds = z.array(id).max(15).optional();
 const action = z
-  .object({ id, text, stage, owner: short, when: short })
+  .object({ id, text, stage, owner: short, when: short, riskIds })
   .strict();
 const risk = z
   .object({
     id,
+    riskIds,
     title: short,
     cause: text,
     consequence: text,
@@ -49,6 +51,7 @@ export const sectionSchemas = {
       z
         .object({
           id,
+          riskIds,
           audience: short,
           message: text,
           channel: short,
@@ -75,6 +78,7 @@ export const sectionSchemas = {
 const event = z
   .object({
     id,
+    riskIds,
     title: short,
     text,
     focus: z.enum([
@@ -113,7 +117,11 @@ const caseSchema = z
       .max(15),
     events: z.array(event).min(1).max(10),
   })
-  .strict();
+  .strict()
+  .refine(
+    (c) => c.events.every((e) => (e.riskIds ?? []).every((id) => c.risks.some((r) => r.id === id))),
+    "Связывайте события с рисками из этого кейса",
+  );
 export const contentSchema = z
   .object({
     version: short.min(1),

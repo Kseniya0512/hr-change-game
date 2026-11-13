@@ -24,6 +24,7 @@ import { stepTitles } from "../../shared/model.ts";
 import { completion } from "../../shared/plan.ts";
 import { api } from "../api.ts";
 import { Field, Select } from "./Fields.tsx";
+import { RiskLinks } from "./RiskLinks.tsx";
 import { Game, Timer } from "./Game.tsx";
 
 export function Host({
@@ -661,6 +662,13 @@ function ContentEditor({
                   }
                 />
               ))}
+              <RiskLinks
+                risks={c.risks}
+                value={e.riskIds}
+                onChange={(riskIds) => setCase({
+                  events: c.events.map((x, index) => index === i ? { ...x, riskIds } : x),
+                })}
+              />
             </div>
           ))}
         </details>
