@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Download, Leaf, Lightbulb, Pause, Play, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, Info, MessageSquare, Lightbulb, Pause, Play, Sparkles, X } from 'lucide-react';
 import type { CaseId, PlanSection, Round, Team } from '../shared/model.ts';
 import { stepTitles } from '../shared/model.ts';
 import { chooseEvent, completion, remaining } from '../shared/plan.ts';
@@ -69,11 +69,11 @@ export default function StandaloneApp() {
  return <LocalStorageMode.Provider value={true}>
   <div className="standalone-shell">
    <header className="topbar standalone-header">
-    <a className="brand" href="#" onClick={(e) => e.preventDefault()}><span className="brand-symbol"><Leaf size={22}/></span><span>пространство<br/>изменений</span></a>
-    <h1>Управляй изменением</h1><span className="pill">Индивидуальный режим</span>
+    <a className="brand" href="#" aria-label="РТК ИТ — Управляй изменением" onClick={(e) => e.preventDefault()}><span className="brand-symbol"><MessageSquare size={23}/></span><span className="brand-word">РТК ИТ<small>ЛЮДИ И ИЗМЕНЕНИЯ</small></span><span className="brand-divider"/><span className="brand-caption">Практика управления<br/>изменениями в HR</span></a>
+    <span className="standalone-mode"><i/>Индивидуальный режим</span>
    </header>
    <div className="standalone-controls">
-    <p className="standalone-notice">План хранится только в этом браузере. Каждый работает со своим планом; общая синхронизация не используется.</p>
+    <div className="standalone-intro"><span className="eyebrow">ПРАКТИКА · КОРПОРАТИВНЫЙ ФРЕЙМВОРК</span><h1>Управляй <span>изменением</span></h1><p>Два HR-кейса, шесть шагов и первоначальный план внедрения. Примените фреймворк на практике в своём темпе.</p></div>
     <div className="standalone-toolbar">
      <label className="field"><span>Учебный кейс</span><select aria-label="Учебный кейс" value={caseId} onChange={(e) => {
       const id = e.target.value as CaseId;
@@ -91,11 +91,12 @@ export default function StandaloneApp() {
      </>}
     </div>
     <p className="fine">Нажимайте «Сохранить блок» после редактирования. В PDF попадут сохранённые ответы; в окне печати выберите «Сохранить как PDF».</p>
+    <p className="standalone-notice"><Info size={17}/><span>План хранится только в этом браузере. Каждый работает со своим планом; общая синхронизация не используется.</span></p>
    </div>
    {error && <div className="notice warning standalone-error" role="alert">{error}{!round && <button className="button small" onClick={() => load(caseId)}>Повторить попытку</button>}</div>}
    {round && team && progress && <div className="standalone-workspace">
     <aside className="journey">
-     <div className="journey-label"><span className="eyebrow">МОЙ ПЛАН</span><h2>{progress.done} / {progress.total}</h2><p>Заполненность, а не оценка решения</p></div>
+     <div className="journey-label"><span className="eyebrow">МОЙ ПЛАН</span><h2>{progress.done} / {progress.total}</h2><p>Заполненность, а не оценка решения</p><div className="progress-track"><div style={{width: `${progress.done/progress.total*100}%`}}/></div></div>
      <nav className="steps" aria-label="Этапы игры">{stepTitles.map((title, i) => <button key={title} className={round.step === i ? 'active' : ''} aria-current={round.step === i ? 'step' : undefined} onClick={() => navigate(i)}><span className="step-number">{String(i+1).padStart(2,'0')}</span><span>{title}</span></button>)}</nav>
      <div className="journey-tip"><Lightbulb size={19}/><b>Можно вернуться к любому шагу</b><p>Оба кейса сохраняются отдельно. Обсудите итоговый план на воркшопе.</p></div>
     </aside>

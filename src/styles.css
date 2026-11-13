@@ -6,15 +6,15 @@
     "Segoe UI",
     Arial,
     sans-serif;
-  color: #203d35;
-  background: #f5f6f2;
+  color: #25232e;
+  background: #ffffff;
   font-synthesis: none;
   font-weight: 400;
-  --green: #194b3f;
-  --ink: #203d35;
-  --muted: #74827a;
-  --line: #e2e7df;
-  --mint: #e4eee3;
+  --green: #8113ff;
+  --ink: #25232e;
+  --muted: #777480;
+  --line: #e9e7ee;
+  --mint: #f5efff;
   --paper: #fff;
   --amber: #f3e6ce;
 }
@@ -52,21 +52,21 @@ button:disabled {
 input:disabled,
 select:disabled,
 textarea:disabled {
-  color: #53655e;
-  background: #f6f8f4;
+  color: #777480;
+  background: #f5efff;
   opacity: 1;
 }
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid #a2be90;
+  outline: 3px solid #b67bff;
   outline-offset: 3px;
 }
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 2px solid #8eae82;
+  outline: 2px solid #b67bff;
   outline-offset: 1px;
-  border-color: #8eae82;
+  border-color: #b67bff;
 }
 h1,
 h2,
@@ -100,7 +100,7 @@ button {
   background: none;
 }
 ::selection {
-  background: #d2e4bb;
+  background: #eadbff;
 }
 .topbar {
   height: 89px;
@@ -109,7 +109,7 @@ button {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--line);
-  background: #fcfcf9;
+  background: #ffffff;
 }
 .brand {
   display: flex;
@@ -126,7 +126,7 @@ button {
   width: 39px;
   height: 39px;
   background: var(--green);
-  color: #e3efcd;
+  color: #ffffff;
   border-radius: 50%;
 }
 .brand-sub {
@@ -145,10 +145,10 @@ button {
 .role-badge {
   font-size: 11px;
   font-weight: 600;
-  border: 1px solid #d7e0d3;
+  border: 1px solid #ded9e5;
   border-radius: 20px;
   padding: 7px 12px;
-  background: #f1f5ed;
+  background: #f5efff;
 }
 .connection {
   font-size: 11px;
@@ -164,10 +164,10 @@ button {
   border-radius: 50%;
 }
 .connection.online {
-  color: #71866f;
+  color: #777480;
 }
 .connection.online i {
-  background: #86a36f;
+  background: #777480;
 }
 .icon-button {
   display: inline-flex;
@@ -198,7 +198,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 9px;
-  border: 1px solid #d6dfd4;
+  border: 1px solid #ded9e5;
   background: #fff;
   border-radius: 8px;
   padding: 13px 19px;
@@ -210,7 +210,7 @@ button {
   text-align: center;
 }
 .button:hover:not(:disabled) {
-  background: #edf2e9;
+  background: #f5efff;
   transform: translateY(-1px);
 }
 .button.primary {
@@ -219,11 +219,11 @@ button {
   border-color: var(--green);
 }
 .button.primary:hover:not(:disabled) {
-  background: #25614e;
+  background: #6810cd;
 }
 .button.soft {
-  background: #e9f0e4;
-  border-color: #e9f0e4;
+  background: #f5efff;
+  border-color: #f5efff;
 }
 .button.small {
   padding: 9px 12px;
@@ -236,7 +236,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #57745b;
+  color: #777480;
   font-size: 12px;
   padding: 3px;
 }
@@ -257,13 +257,13 @@ button {
   font-weight: 650;
   letter-spacing: 1.6px;
   text-transform: uppercase;
-  color: #72816d;
+  color: #777480;
 }
 .pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: #edf0e9;
+  background: #f5efff;
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 10px;
@@ -271,8 +271,8 @@ button {
   white-space: nowrap;
 }
 .pill.mint {
-  background: #e5eedb;
-  color: #55764a;
+  background: #e9e7ee;
+  color: #777480;
 }
 .field {
   display: block;
@@ -288,10 +288,10 @@ button {
 .field select,
 .field textarea {
   width: 100%;
-  border: 1px solid #dce3d7;
+  border: 1px solid #e9e7ee;
   border-radius: 7px;
   padding: 11px 12px;
-  color: #2d493f;
+  color: #777480;
   background: #fff;
   min-width: 0;
   font-size: 13px;
@@ -303,7 +303,7 @@ button {
 }
 .field input::placeholder,
 .field textarea::placeholder {
-  color: #a0aaa0;
+  color: #a39aa9;
 }
 .field-grid {
   display: grid;
@@ -319,8 +319,8 @@ button {
   gap: 10px;
   font-size: 12px;
   line-height: 1.7;
-  background: #f0f4e9;
-  color: #617354;
+  background: #f5efff;
+  color: #777480;
   border-radius: 7px;
   padding: 14px 16px;
   margin: 18px 0;
@@ -360,7 +360,7 @@ button {
   font-size: 10px;
 }
 .saved {
-  color: #829275;
+  color: #777480;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -395,13 +395,13 @@ button {
   gap: 8px;
 }
 .live-dot {
-  background: #8eaa7c;
+  background: #a39aa9;
   width: 6px;
   height: 6px;
   border-radius: 50%;
 }
 .hero h1 {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: inherit;
   font-weight: 400;
   font-size: clamp(48px, 5.4vw, 80px);
   line-height: 1.07;
@@ -410,7 +410,7 @@ button {
 }
 .hero h1 em {
   font-weight: 400;
-  color: #82986a;
+  color: #777480;
 }
 .hero-intro {
   font-size: 23px;
@@ -422,12 +422,12 @@ button {
 .hero-description {
   font-size: 13px;
   line-height: 1.9;
-  color: #7c887f;
+  color: #777480;
 }
 .hero-facts {
   display: flex;
   gap: 32px;
-  border-top: 1px solid #dee5d8;
+  border-top: 1px solid #e9e7ee;
   padding-top: 24px;
   margin: 33px 0 28px;
   width: max-content;
@@ -435,11 +435,11 @@ button {
 }
 .hero-facts span {
   font-size: 11px;
-  color: #7b887c;
+  color: #777480;
 }
 .hero-facts b {
   display: block;
-  color: #31543f;
+  color: #6810cd;
   font-weight: 450;
   font-size: 29px;
   margin-bottom: 5px;
@@ -449,7 +449,7 @@ button {
   align-items: center;
   gap: 8px;
   font-size: 10px;
-  color: #819176;
+  color: #777480;
 }
 .entry-side {
   position: relative;
@@ -462,7 +462,7 @@ button {
 }
 .decor-orbit {
   position: absolute;
-  border: 1px solid #e0e7d8;
+  border: 1px solid #e9e7ee;
   border-radius: 50%;
   z-index: -1;
   pointer-events: none;
@@ -477,17 +477,17 @@ button {
   height: 300px;
   top: 140px;
   left: 30%;
-  background: #e9efdf77;
+  background: #e9e7ee77;
   border: 0;
 }
 .entry-card {
   background: #fff;
   max-width: 420px;
   width: 100%;
-  border: 1px solid #e7eade;
+  border: 1px solid #e9e7ee;
   border-radius: 15px;
   padding: 29px 30px 22px;
-  box-shadow: 0 20px 60px #264d3510;
+  box-shadow: 0 20px 60px #25232e10;
 }
 .step-tag {
   font-size: 9px;
@@ -495,10 +495,10 @@ button {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #889578;
+  color: #777480;
 }
 .entry-card h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 30px;
   font-weight: 400;
   margin: 22px 0 12px;
@@ -516,7 +516,7 @@ button {
   align-items: center;
   gap: 5px;
   font-size: 9px;
-  color: #8a9780;
+  color: #777480;
   border-top: 1px solid var(--line);
   padding-top: 18px;
   margin-top: 24px;
@@ -529,8 +529,8 @@ button {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: #e9efdf;
-  border: 1px solid #dde6d3;
+  background: #e9e7ee;
+  border: 1px solid #e9e7ee;
   border-radius: 10px;
   max-width: 360px;
   width: 88%;
@@ -544,13 +544,13 @@ button {
 }
 .preview-card p {
   font-size: 9px;
-  color: #7a8b6e;
+  color: #777480;
   margin: 5px 0 0;
 }
 .preview-icon {
   display: grid;
   place-items: center;
-  border: 1px solid #bcccb0;
+  border: 1px solid #a39aa9;
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -562,7 +562,7 @@ button {
   justify-content: space-between;
   gap: 10px;
   font-size: 9px;
-  color: #98a18f;
+  color: #a39aa9;
   border-top: 1px solid var(--line);
   padding: 19px 0;
   margin-top: 15px;
@@ -577,7 +577,7 @@ button {
 .journey {
   border-right: 1px solid var(--line);
   padding: 35px 20px 20px;
-  background: #f3f5ef;
+  background: #f5efff;
   display: flex;
   flex-direction: column;
 }
@@ -591,7 +591,7 @@ button {
 }
 .journey-label p {
   font-size: 10px;
-  color: #8b9687;
+  color: #777480;
   margin-bottom: 0;
   overflow-wrap: anywhere;
 }
@@ -608,22 +608,22 @@ button {
   border-radius: 8px;
   text-align: left;
   font-size: 11px;
-  color: #87917f;
+  color: #777480;
   line-height: 1.5;
 }
 .steps button > span:nth-child(2) {
   flex: 1;
 }
 .steps button:hover {
-  background: #e8ede1;
+  background: #e9e7ee;
 }
 .steps button.active {
-  background: #e3ebd7;
-  color: #315436;
+  background: #e9e7ee;
+  color: #6810cd;
   font-weight: 600;
 }
 .steps button.passed {
-  color: #5a7853;
+  color: #777480;
 }
 .step-number {
   display: flex;
@@ -631,21 +631,21 @@ button {
   justify-content: center;
   width: 24px;
   height: 24px;
-  border: 1px solid #dce3d3;
+  border: 1px solid #ded9e5;
   border-radius: 50%;
   font-size: 9px;
   flex-shrink: 0;
 }
 .active .step-number {
   background: #fff;
-  border-color: #d0dbbf;
+  border-color: #ded9e5;
 }
 .journey-tip {
   margin: 45px 10px 20px;
   padding: 18px 15px;
-  border: 1px solid #e0e6d6;
+  border: 1px solid #e9e7ee;
   border-radius: 9px;
-  color: #82916f;
+  color: #777480;
 }
 .journey-tip > b {
   display: block;
@@ -659,7 +659,7 @@ button {
 }
 .journey-footer {
   margin: auto 12px 0;
-  color: #a2aa99;
+  color: #a39aa9;
   font-size: 9px;
   line-height: 1.7;
   padding-top: 30px;
@@ -682,14 +682,14 @@ button {
 }
 .case-number {
   font-size: 10px;
-  color: #8b9685;
+  color: #777480;
 }
 .timer {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background: #fff;
-  border: 1px solid #dfe5d8;
+  border: 1px solid #e9e7ee;
   border-radius: 7px;
   padding: 8px 11px;
   font-size: 19px;
@@ -700,39 +700,39 @@ button {
 .timer small {
   font-size: 9px;
   letter-spacing: 0;
-  color: #889779;
+  color: #777480;
 }
 .timer.urgent {
   color: #b2843c;
   background: #fffbf0;
 }
 .round-status {
-  background: #e6edde;
+  background: #e9e7ee;
   font-size: 11px;
-  color: #6b7d5a;
+  color: #777480;
   padding: 12px 15px;
   border-radius: 7px;
   margin-bottom: 15px;
 }
 .game-paper {
   background: #fff;
-  border: 1px solid #e2e6db;
+  border: 1px solid #e9e7ee;
   border-radius: 12px;
   padding: 30px 32px;
-  box-shadow: 0 4px 25px #263e2410;
+  box-shadow: 0 4px 25px #25232e10;
 }
 .paper-meta {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  color: #9ba58e;
+  color: #a39aa9;
   font-size: 8px;
   letter-spacing: 1px;
   margin-bottom: 27px;
 }
 .case-lead h2,
 .screen-lead h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 33px;
   font-weight: 400;
   line-height: 1.2;
@@ -742,7 +742,7 @@ button {
 .case-lead > p,
 .screen-lead > p {
   font-size: 12px;
-  color: #87927f;
+  color: #777480;
   line-height: 1.8;
 }
 .screen-lead {
@@ -757,17 +757,17 @@ button {
 .before-after > div {
   padding: 20px;
   border-radius: 9px;
-  background: #f4f4ee;
-  border: 1px solid #e9e9df;
+  background: #f5efff;
+  border: 1px solid #e9e7ee;
 }
 .before-after > div + div {
-  background: #eaf0de;
-  border-color: #dce6cc;
+  background: #e9e7ee;
+  border-color: #ded9e5;
 }
 .before-after span {
   font-size: 9px;
   letter-spacing: 1.4px;
-  color: #919880;
+  color: #777480;
 }
 .before-after p {
   font-size: 15px;
@@ -785,7 +785,7 @@ button {
 }
 .context-grid p {
   font-size: 11px;
-  color: #8a947e;
+  color: #777480;
   line-height: 1.8;
   margin-top: 7px;
 }
@@ -799,18 +799,18 @@ button {
   font-size: 11px;
   padding: 10px 13px;
   line-height: 1.5;
-  border: 1px solid #e0e5d8;
+  border: 1px solid #e9e7ee;
   border-radius: 7px;
   text-align: left;
 }
 .choice.selected {
-  border-color: #91aa70;
-  background: #eff4e5;
-  color: #56713e;
+  border-color: #777480;
+  background: #f5efff;
+  color: #6810cd;
 }
 .choice:hover:not(:disabled) {
-  border-color: #a7b993;
-  background: #f3f6ed;
+  border-color: #a39aa9;
+  background: #f5efff;
 }
 .help-bar {
   display: flex;
@@ -825,11 +825,11 @@ button {
   align-items: center;
   gap: 6px;
   font-size: 10px;
-  color: #7d906a;
+  color: #777480;
   padding: 0;
 }
 .help-bar button:hover {
-  color: #325f30;
+  color: #6810cd;
 }
 .step-footer {
   display: flex;
@@ -840,7 +840,7 @@ button {
 .collaboration {
   border-left: 1px solid var(--line);
   padding: 27px 20px;
-  background: #f9faf6;
+  background: #fcfbfd;
   min-width: 0;
 }
 .progress-card {
@@ -849,7 +849,7 @@ button {
   margin-bottom: 24px;
 }
 .progress-number {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 40px;
   font-weight: 400;
   margin: 16px 0 13px;
@@ -857,23 +857,23 @@ button {
 .progress-number span {
   font-family: inherit;
   font-size: 21px;
-  color: #a5ae97;
+  color: #a39aa9;
 }
 .progress-track {
   height: 5px;
   border-radius: 6px;
-  background: #e5eadc;
+  background: #e9e7ee;
   overflow: hidden;
 }
 .progress-track > div {
   height: 100%;
-  background: #93ac72;
+  background: #a39aa9;
   transition: width 0.4s;
   border-radius: 6px;
 }
 .progress-card p {
   font-size: 10px;
-  color: #91a082;
+  color: #a39aa9;
   margin: 14px 0 0;
 }
 .discussion-card {
@@ -886,7 +886,7 @@ button {
 }
 .count {
   font-size: 10px;
-  background: #e8edde;
+  background: #e9e7ee;
   padding: 3px 7px;
   border-radius: 5px;
 }
@@ -900,11 +900,11 @@ button {
 .empty-small {
   padding: 25px 5px;
   text-align: center;
-  color: #b5c1a8;
+  color: #a39aa9;
 }
 .empty-small p {
   font-size: 10px;
-  color: #95a485;
+  color: #a39aa9;
   margin: 10px 0;
 }
 .proposal {
@@ -915,7 +915,7 @@ button {
 }
 .proposal b {
   font-size: 9px;
-  color: #7d8d70;
+  color: #777480;
 }
 .proposal p {
   margin: 6px 0 9px;
@@ -927,14 +927,14 @@ button {
 }
 .proposal-actions button {
   padding: 0;
-  color: #698a4f;
+  color: #6810cd;
   font-size: 9px;
 }
 .curator {
-  border: 1px solid #e2e9d9;
+  border: 1px solid #e9e7ee;
   padding: 15px 12px;
   border-radius: 8px;
-  background: #f2f5ec;
+  background: #f5efff;
 }
 .event-notification {
   display: flex;
@@ -978,10 +978,10 @@ button {
 .criterion i {
   font-size: 9px;
   font-style: normal;
-  color: #9eac90;
+  color: #a39aa9;
 }
 .criterion select {
-  border: 1px solid #d9e1ce;
+  border: 1px solid #ded9e5;
   border-radius: 5px;
   padding: 7px 8px;
   font-size: 10px;
@@ -993,7 +993,7 @@ button {
   align-items: center;
   gap: 12px;
   padding: 17px;
-  background: #eef3e7;
+  background: #f5efff;
   border-radius: 7px;
   margin: 20px 0 30px;
 }
@@ -1002,7 +1002,7 @@ button {
 }
 .assessment-result p {
   font-size: 10px;
-  color: #879774;
+  color: #777480;
   margin: 7px 0 0;
 }
 .stakeholder-map {
@@ -1011,8 +1011,8 @@ button {
   justify-content: center;
   align-items: center;
   gap: 10px;
-  background: radial-gradient(circle at center, #edf2e3 0, #fbfcf8 70%);
-  border: 1px solid #e9eddf;
+  background: radial-gradient(circle at center, #f5efff 0, #fcfbfd 70%);
+  border: 1px solid #e9e7ee;
   border-radius: 10px;
   padding: 30px 15px;
   min-height: 145px;
@@ -1025,19 +1025,19 @@ button {
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  color: #65824e;
+  color: #777480;
   margin-bottom: 10px;
 }
 .map-node {
-  border: 1px solid #d8e2c9;
+  border: 1px solid #ded9e5;
   background: #fff;
   border-radius: 20px;
   padding: 8px 12px;
   font-size: 10px;
 }
 .edit-card {
-  background: #f9faf6;
-  border: 1px solid #e3e8da;
+  background: #fcfbfd;
+  border: 1px solid #e9e7ee;
   border-radius: 8px;
   padding: 18px;
   margin: 15px 0;
@@ -1046,7 +1046,7 @@ button {
   margin-bottom: 0;
 }
 .remove {
-  color: #a3ac96;
+  color: #a39aa9;
 }
 .candidate-grid {
   display: grid;
@@ -1056,19 +1056,19 @@ button {
 }
 .candidate {
   padding: 15px;
-  border: 1px solid #e2e6d9;
+  border: 1px solid #e9e7ee;
   border-radius: 8px;
   text-align: left;
   line-height: 1.6;
   min-width: 0;
 }
 .candidate.selected {
-  background: #edf3e3;
-  border-color: #99ae7b;
+  background: #f5efff;
+  border-color: #a39aa9;
 }
 .candidate > span {
   display: block;
-  color: #8a9b74;
+  color: #777480;
   font-size: 9px;
   margin-bottom: 8px;
 }
@@ -1078,7 +1078,7 @@ button {
 }
 .candidate p {
   font-size: 10px;
-  color: #8d9782;
+  color: #777480;
   margin: 9px 0 0;
 }
 .builder-tabs {
@@ -1096,16 +1096,16 @@ button {
   white-space: nowrap;
   padding: 12px 10px 14px;
   border-bottom: 2px solid transparent;
-  color: #929d84;
+  color: #a39aa9;
 }
 .builder-tabs button[aria-selected="true"] {
-  border-color: #7b9960;
-  color: #456937;
+  border-color: #777480;
+  color: #6810cd;
   font-weight: 600;
 }
 .builder-tabs button > span {
   font-size: 8px;
-  background: #f0f3e8;
+  background: #f5efff;
   border-radius: 4px;
   padding: 3px 5px;
 }
@@ -1119,7 +1119,7 @@ button {
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  border: 1px solid #e3e8da;
+  border: 1px solid #e9e7ee;
   border-radius: 7px;
   padding: 13px;
   text-align: left;
@@ -1127,13 +1127,13 @@ button {
   line-height: 1.6;
 }
 .action-option > span {
-  color: #9aaa88;
+  color: #a39aa9;
   font-size: 16px;
   line-height: 1.2;
 }
 .action-option.selected {
-  background: #edf3e4;
-  border-color: #cbdabd;
+  background: #f5efff;
+  border-color: #ded9e5;
 }
 .risk-bank {
   display: grid;
@@ -1169,12 +1169,12 @@ button {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  border: 1px solid #e5eadc;
+  border: 1px solid #e9e7ee;
   padding: 12px;
   border-radius: 7px;
 }
 .checkbox-grid input {
-  accent-color: #6e8a51;
+  accent-color: #6810cd;
 }
 .event-card {
   position: relative;
@@ -1195,7 +1195,7 @@ button {
   margin-bottom: 20px;
 }
 .event-card h3 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 26px;
   font-weight: 400;
   margin: 12px 0 15px;
@@ -1212,9 +1212,9 @@ button {
 .empty-state {
   padding: 45px 25px;
   text-align: center;
-  border: 1px dashed #d5dfc8;
+  border: 1px dashed #ded9e5;
   border-radius: 12px;
-  color: #869a6d;
+  color: #777480;
 }
 .empty-state p {
   font-size: 13px;
@@ -1225,11 +1225,11 @@ button {
   display: flex;
   align-items: center;
   gap: 15px;
-  background: #edf3e5;
+  background: #f5efff;
   border-radius: 9px;
   padding: 22px;
   margin: 25px 0;
-  color: #5a7b44;
+  color: #6810cd;
   flex-wrap: wrap;
 }
 .result-banner b {
@@ -1238,7 +1238,7 @@ button {
 .result-banner p {
   font-size: 10px;
   margin: 7px 0 0;
-  color: #849675;
+  color: #777480;
 }
 .result-banner .button {
   margin-left: auto;
@@ -1260,13 +1260,13 @@ button {
 .summary p {
   white-space: pre-wrap;
   font-size: 12px;
-  color: #7f8c75;
+  color: #777480;
   margin: 15px 0 0;
 }
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: #1c372a66;
+  background: #25232e66;
   z-index: 50;
   display: flex;
   align-items: center;
@@ -1276,15 +1276,15 @@ button {
 }
 .help-modal {
   position: relative;
-  background: #fcfdf9;
-  border: 1px solid #e4eadb;
+  background: #fcfbfd;
+  border: 1px solid #e9e7ee;
   border-radius: 15px;
   padding: 35px;
   max-width: 560px;
   width: 100%;
   max-height: 90vh;
   overflow: auto;
-  box-shadow: 0 30px 100px #12271d33;
+  box-shadow: 0 30px 100px #25232e33;
 }
 .modal-close {
   position: absolute;
@@ -1294,15 +1294,15 @@ button {
 .modal-symbol {
   display: grid;
   place-items: center;
-  background: #e7efdb;
+  background: #e9e7ee;
   border-radius: 12px;
   width: 50px;
   height: 50px;
   margin-bottom: 20px;
-  color: #7e9a5f;
+  color: #777480;
 }
 .help-modal h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-weight: 400;
   font-size: 29px;
   margin: 15px 0;
@@ -1311,12 +1311,12 @@ button {
 .help-modal li {
   font-size: 13px;
   line-height: 1.9;
-  color: #6d8060;
+  color: #777480;
 }
 .source {
   font-size: 10px;
   line-height: 1.7;
-  color: #98a48a;
+  color: #a39aa9;
   border-top: 1px solid var(--line);
   padding-top: 15px;
   margin: 20px 0;
@@ -1337,7 +1337,7 @@ button {
   margin-bottom: 30px;
 }
 .host-heading h1 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 43px;
   font-weight: 400;
   letter-spacing: -1px;
@@ -1345,7 +1345,7 @@ button {
 }
 .host-heading p {
   font-size: 12px;
-  color: #88967c;
+  color: #777480;
   margin-bottom: 0;
 }
 .host-overview {
@@ -1364,20 +1364,20 @@ button {
   gap: 15px;
 }
 .host-overview svg {
-  color: #9aac88;
+  color: #a39aa9;
 }
 .host-overview b {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 32px;
   font-weight: 400;
 }
 .host-overview span {
   font-size: 10px;
-  color: #91a07f;
+  color: #a39aa9;
 }
 .host-toolbar {
-  border: 1px solid #dfe6d5;
-  background: #edf2e5;
+  border: 1px solid #e9e7ee;
+  background: #f5efff;
   padding: 20px;
   border-radius: 9px;
   display: flex;
@@ -1389,7 +1389,7 @@ button {
 }
 .host-toolbar p {
   font-size: 11px;
-  color: #879775;
+  color: #777480;
   margin: 7px 0 0;
 }
 .toolbar-buttons {
@@ -1404,15 +1404,15 @@ button {
 }
 .team-card {
   background: #fff;
-  border: 1px solid #e1e7d8;
+  border: 1px solid #e9e7ee;
   border-radius: 11px;
   padding: 24px;
   min-width: 0;
 }
 .team-mark {
   font-size: 12px;
-  color: #8da178;
-  background: #e9efde;
+  color: #777480;
+  background: #e9e7ee;
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -1429,20 +1429,20 @@ button {
 }
 .status-label {
   font-size: 10px;
-  color: #99a38e;
+  color: #a39aa9;
 }
 .status-label.running {
-  color: #749451;
+  color: #6810cd;
 }
 .team-card h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-size: 27px;
   font-weight: 400;
   margin: 22px 0 10px;
 }
 .team-case {
   font-size: 12px;
-  color: #8b987e;
+  color: #777480;
   min-height: 35px;
 }
 .team-time {
@@ -1454,15 +1454,15 @@ button {
 }
 .team-time > .timer {
   border: 0;
-  background: #f3f6ed;
+  background: #f5efff;
   font-size: 22px;
 }
 .team-time > span:last-child {
   font-size: 10px;
-  color: #91a17e;
+  color: #a39aa9;
 }
 .team-time b {
-  color: #647e51;
+  color: #777480;
   letter-spacing: 1px;
 }
 .team-progress {
@@ -1470,18 +1470,18 @@ button {
   justify-content: space-between;
   font-size: 10px;
   margin: 13px 0;
-  color: #899b76;
+  color: #777480;
 }
 .team-progress b {
   font-weight: 500;
-  color: #738a60;
+  color: #777480;
 }
 .team-signals {
   display: flex;
   justify-content: space-between;
   gap: 10px;
   font-size: 9px;
-  color: #9ca88d;
+  color: #a39aa9;
   border-top: 1px solid var(--line);
   padding: 15px 0 20px;
 }
@@ -1509,7 +1509,7 @@ button {
 }
 .team-detail summary {
   cursor: pointer;
-  color: #8b9a7b;
+  color: #777480;
 }
 .team-detail p {
   font-size: 11px;
@@ -1523,23 +1523,23 @@ button {
   align-items: center;
   font-size: 10px;
   padding: 8px 0;
-  color: #79915f;
+  color: #777480;
 }
 .invite-panel {
-  border: 1px solid #e1e7d8;
+  border: 1px solid #e9e7ee;
   border-radius: 10px;
   padding: 27px;
   background: #fff;
   margin-top: 30px;
 }
 .invite-panel h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-weight: 400;
   font-size: 27px;
   margin: 9px 0;
 }
 .invite-panel .section-heading > svg {
-  color: #9aad86;
+  color: #a39aa9;
 }
 .invite-row {
   display: flex;
@@ -1561,7 +1561,7 @@ button {
   font-size: 19px;
   letter-spacing: 4px;
   display: block;
-  color: #8da275;
+  color: #777480;
   margin-top: 7px;
 }
 .invite-role {
@@ -1584,7 +1584,7 @@ button {
   align-items: center;
   gap: 7px;
   font-size: 9px;
-  color: #99a68b;
+  color: #a39aa9;
   margin-top: 35px;
 }
 .content-editor {
@@ -1594,7 +1594,7 @@ button {
   background: #fff;
 }
 .content-editor h2 {
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-weight: 400;
   font-size: 29px;
 }
@@ -2091,7 +2091,7 @@ button {
 /* Optional links keep workshop events tied to explicit team choices. */
 .risk-links {
   margin-top: 14px;
-  border-top: 1px solid var(--line, #dde5e0);
+  border-top: 1px solid var(--line, #e9e7ee);
   padding-top: 10px;
 }
 .risk-links summary {
@@ -2121,12 +2121,12 @@ button {
   height: 18px;
   flex: 0 0 18px;
   margin-top: 2px;
-  accent-color: #27634c;
+  accent-color: #8113ff;
 }
 .risk-links fieldset:disabled label { cursor: default; }
 .event-preparation {
-  background: #f0f5ef;
-  border: 1px solid #dce6d9;
+  background: #f5efff;
+  border: 1px solid #e9e7ee;
   border-radius: 14px;
   padding: 20px;
   margin-bottom: 20px;
@@ -2137,7 +2137,7 @@ button {
 
 .standalone-header { gap: 18px; flex-wrap: wrap; height: auto; min-height: 89px; }
 .standalone-header h1 { font-size: 1.12rem; margin: 0 auto 0 0; }
-.standalone-controls { padding: 22px 28px; background: #f2f5ee; border-bottom: 1px solid #dce3d8; }
+.standalone-controls { padding: 22px 28px; background: #f5efff; border-bottom: 1px solid #e9e7ee; }
 .standalone-notice { margin: 0 0 16px; font-size: .9rem; }
 .standalone-toolbar { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; }
 .standalone-toolbar .field { min-width: 260px; flex: 1; max-width: 430px; margin: 0; }
